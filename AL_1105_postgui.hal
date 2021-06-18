@@ -78,12 +78,12 @@ net      machine-off                 nist_on.off                       halui.mac
 addf     toggle_pause                servo-thread
 addf     nist_pause                  servo-thread
 addf     and_start                   servo-thread
-addf     and_blink                   servo-thread
-addf     delay_blink                 servo-thread
-addf     not_blink                   servo-thread
+addf     and_led_pause               servo-thread
+addf     delay_led_pause             servo-thread
+addf     not_led_pause               servo-thread
 addf     or_led                      servo-thread
 
-setp     delay_blink.on-delay        0.8
+setp     delay_led_pause.on-delay        0.8
 
 net      program-start               hm2_7i76e.0.7i84.0.1.input-17     and_start.in0
 net      program-stop                hm2_7i76e.0.7i84.0.1.input-19     halui.program.stop
@@ -96,11 +96,11 @@ net      program-is-running          halui.program.is-running          or_led.in
 net      pause_switch                toggle_pause.out                  nist_pause.in
 net      pause_on                    nist_pause.on                     halui.program.pause
 net      pause_off                   nist_pause.off                    halui.program.resume
-net      pause-is-on                 halui.program.is-paused           nist_pause.is-on and_blink.in0
+net      pause-is-on                 halui.program.is-paused           nist_pause.is-on and_led_pause.in0
 
-net      blink-out                   delay_blink.out                   not_blink.in or_led.in1
-net      blink-not                   not_blink.out                     and_blink.in1
-net      blink-toogle                and_blink.out                     delay_blink.in
+net      led_pause-out               delay_led_pause.out               not_led_pause.in or_led.in1
+net      led_pause-not               not_led_pause.out                 and_led_pause.in1
+net      led_pause-toogle            and_led_pause.out                 delay_led_pause.in
 
 net      program-led                 or_led.out                        hm2_7i76e.0.7i84.0.1.output-09
 
@@ -209,6 +209,23 @@ net      spindle-start               and_sp-start.out                  halui.spi
 net      spindle-stop                and_sp-stop.out                   halui.spindle.0.stop
 net      spindle-increase            or_sp-inc.out                     halui.spindle.0.increase
 net      spindle-decrease            or_sp-dec.out                     halui.spindle.0.decrease
+
+
+
+# ---------- TOOLCHANGE ----------
+# toolchange-toggle is linked to a blink function to indicate that the tool holder is open
+# blinking of toolchange LED is gained by a loopback of AND -> DELAY -> NOT
+
+addf     and_led_toolchange          servo-thread
+addf     delay_led_toolchange        servo-thread
+addf     not_led_toolchange          servo-thread
+
+net      toolchange-command          hm2_7i76e.0.7i84.0.1.input-22
+net      toolchange-toggle           and_led_toolchange.in0
+
+net      led_toolchange-out          delay_led_toolchange.out          not_led_toolchange.in hm2_7i76e.0.7i84.0.1.output-12
+net      led_toolchange-not          not_led_toolchange.out            and_led_toolchange.in1
+net      led_toolchange-toogle       and_led_toolchange.out            delay_led_toolchange.in
 
 
 
