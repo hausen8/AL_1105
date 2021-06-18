@@ -214,9 +214,9 @@ net      spindle-decrease            or_sp-dec.out                     halui.spi
 
 # ---------- PYVCP PANEL ----------
 
-net      vfd-temperature             wj200-vfd.0.heatsink-temp         pyvcp.vfd-temperature
-net      spindle-current             wj200-vfd.0.motor-current         pyvcp.spindle-current
-net      spindle-speed               spindle.0.speed-out               pyvcp.spindle-speed
+net      vfd-temperature-bar         wj200-vfd.0.heatsink-temp         pyvcp.vfd-temperature
+net      spindle-current-bar         wj200-vfd.0.motor-current         pyvcp.spindle-current
+net      spindle-speed-bar           spindle.0.speed-out               pyvcp.spindle-speed
 
 net      spindle-warmup-btn          halui.mdi-command-03              pyvcp.warmup-button
 net      spindle-start-btn           halui.mdi-command-04              pyvcp.start-button
