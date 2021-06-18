@@ -20,7 +20,7 @@ loadrt   or2                                   names=or_prot,or_on,or_led,or_mis
 loadrt   and2                                  names=and_on,and_start,and_led_pause,and_mist,and_flood,and_x,and_y,and_z,and_home,and_sp-start,and_sp-stop,and_sp-inc,and_sp-dec,and_led_toolchange
 loadrt   toggle                                names=toggle_toolchange,toggle_on,toggle_pause,toggle_mist,toggle_flood
 loadrt   toggle2nist                           names=nist_on,nist_pause,nist_mist,nist_flood
-loadrt   not                                   names=not_led_pause,not_led_toolchange
+loadrt   not                                   names=not_locked,not_led_pause,not_led_toolchange
 loadrt   near                                  names=near_sp-start,near_sp-stop,near_sp-inc,near_sp-dec
 loadrt   mux4                                  names=mux_jog
 loadrt   sum2                                  names=sum_jog-z
@@ -41,6 +41,7 @@ addf     delay_enable                          servo-thread
 addf     lut_toolchange                        servo-thread
 addf     lut_estop                             servo-thread
 addf     toggle_toolchange                     servo-thread
+addf     not_locked                            servo-thread
 addf     msg_vfd-watchdog                      servo-thread
 addf     msg_vfd-error                         servo-thread
 addf     hm2_7i76e.0.write                     servo-thread
