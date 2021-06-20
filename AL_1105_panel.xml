@@ -104,7 +104,7 @@
                     <width>"13"</width>
                 </label>
                 <led>
-                    <halpin>"released"</halpin>
+                    <halpin>"tool-released"</halpin>
                     <size>20</size>
                     <on_color>"#80b000"</on_color>
                     <off_color>"#ff3000"</off_color>
@@ -116,7 +116,7 @@
                     <width>"13"</width>
                 </label>
                 <led>
-                    <halpin>"clamped"</halpin>
+                    <halpin>"tool-clamped"</halpin>
                     <size>20</size>
                     <on_color>"#80b000"</on_color>
                     <off_color>"#ff3000"</off_color>

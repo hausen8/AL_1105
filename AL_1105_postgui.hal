@@ -1,4 +1,4 @@
-# Last Edited: 21-06-18
+# Last Edited: 21-06-20
 # LinuxCNC Version: 2.8
 
 
@@ -256,8 +256,8 @@ net      g55-btn                     halui.mdi-command-19              pyvcp.g55
 net      g56-btn                     halui.mdi-command-20              pyvcp.g56-button
 net      g57-btn                     halui.mdi-command-21              pyvcp.g57-button
 
-net      tool-released               pyvcp.released
-net      tool-locked                 pyvcp.clamped
+net      tool-released               pyvcp.tool-released
+net      tool-locked                 pyvcp.tool-clamped
 
 
 
