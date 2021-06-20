@@ -50,10 +50,6 @@
                 <halpin>"stop-button"</halpin>
                 <text>"Stop"</text>
             </button>
-            <button>
-                <halpin>"toolchange"</halpin>
-                <text>"Toolchange"</text>
-            </button>
             <label>
                 <text>" "</text>
             </label>
@@ -104,25 +100,13 @@
             </label>
             <hbox>
                 <label>
-                    <text>"Ready for ATC"</text>
-                    <width>"13"</width>
-                </label>
-                <led>
-                    <halpin>"ready"</halpin>
-                    <size>20</size>
-                    <on_color>"#80b000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </led>
-            </hbox>
-            <hbox>
-                <label>
                     <text>"Tool released"</text>
                     <width>"13"</width>
                 </label>
                 <led>
                     <halpin>"released"</halpin>
                     <size>20</size>
-                    <on_color>"#ff3000"</on_color>
+                    <on_color>"#80b000"</on_color>
                     <off_color>"#ff3000"</off_color>
                 </led>
             </hbox>
@@ -134,20 +118,8 @@
                 <led>
                     <halpin>"clamped"</halpin>
                     <size>20</size>
-                    <on_color>"#ffc000"</on_color>
-                    <off_color>"#ffc000"</off_color>
-                </led>
-            </hbox>
-            <hbox>
-                <label>
-                    <text>"Taper cleaning"</text>
-                    <width>"13"</width>
-                </label>
-                <led>
-                    <halpin>"cleaning"</halpin>
-                    <size>20</size>
-                    <on_color>"#ffc000"</on_color>
-                    <off_color>"#ffc000"</off_color>
+                    <on_color>"#80b000"</on_color>
+                    <off_color>"#ff3000"</off_color>
                 </led>
             </hbox>
         </vbox>

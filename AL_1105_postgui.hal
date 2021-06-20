@@ -256,6 +256,10 @@ net      g55-btn                     halui.mdi-command-19              pyvcp.g55
 net      g56-btn                     halui.mdi-command-20              pyvcp.g56-button
 net      g57-btn                     halui.mdi-command-21              pyvcp.g57-button
 
+net      tool-released               pyvcp.released
+net      tool-locked                 pyvcp.clamped
+
+
 
 
 # ---------- DECREASE VFD WATCHDOG TIMEOUT ----------

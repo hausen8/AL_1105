@@ -1,4 +1,4 @@
-# Last Edited: 21-06-18
+# Last Edited: 21-06-20
 # LinuxCNC Version: 2.8
 
 
@@ -15,12 +15,12 @@ setp     hm2_7i76e.0.watchdog.timeout_ns       5000000
 loadrt   watchdog                              num_inputs=1
 loadrt   pid                                   names=pid.x,pid.y,pid.z,pid.s
 loadrt   timedelay                             names=delay_cleaning,delay_toolchange,delay_enable,delay_led_pause,delay_led_toolchange
-loadrt   lut5                                  names=lut_toolchange,lut_estop
+loadrt   lut5                                  names=lut_inhibit,lut_toolchange,lut_estop
 loadrt   or2                                   names=or_prot,or_on,or_led,or_mist,or_flood,or_sp-inc,or_sp-dec
 loadrt   and2                                  names=and_on,and_start,and_led_pause,and_mist,and_flood,and_x,and_y,and_z,and_home,and_sp-start,and_sp-stop,and_sp-inc,and_sp-dec,and_led_toolchange
 loadrt   toggle                                names=toggle_toolchange,toggle_on,toggle_pause,toggle_mist,toggle_flood
 loadrt   toggle2nist                           names=nist_on,nist_pause,nist_mist,nist_flood
-loadrt   not                                   names=not_locked,not_led_pause,not_led_toolchange
+loadrt   not                                   names=not_led_pause,not_led_toolchange
 loadrt   near                                  names=near_sp-start,near_sp-stop,near_sp-inc,near_sp-dec
 loadrt   mux4                                  names=mux_jog
 loadrt   sum2                                  names=sum_jog-z
@@ -38,10 +38,10 @@ addf     pid.s.do-pid-calcs                    servo-thread
 addf     delay_cleaning                        servo-thread
 addf     delay_toolchange                      servo-thread
 addf     delay_enable                          servo-thread
+addf     lut_inhibit                           servo-thread
 addf     lut_toolchange                        servo-thread
 addf     lut_estop                             servo-thread
 addf     toggle_toolchange                     servo-thread
-addf     not_locked                            servo-thread
 addf     msg_vfd-watchdog                      servo-thread
 addf     msg_vfd-error                         servo-thread
 addf     hm2_7i76e.0.write                     servo-thread
@@ -163,7 +163,7 @@ net      z-home-sw                             joint.2.home-sw-in               
 
 # ---------- SPINDLE ----------
 # watchdog.timeout-0 can not be set to 0.2s here. It may take too long to establish communication via USB.
-# Therefore it is initially set to a high value and later reduced in the postgui.hal
+# Therefore it is initially set to a higher value and later reduced in the postgui.hal
 
 loadusr  -W wj200_vfd                          --device /dev/ttyUSB0 --baud 9600 --parity N --data 8 --stop 1
 
@@ -226,8 +226,12 @@ net      tool-number                           iocontrol.0.tool-prep-number     
 net      tool-prepare-loopback                 iocontrol.0.tool-prepare            iocontrol.0.tool-prepared
 
 net      tool-released                         hm2_7i76e.0.7i76.0.0.input-08
-net      tool-locked                           hm2_7i76e.0.7i76.0.0.input-09       not_locked.in
-# net      spindle-inhibit                       not_locked.out                      spindle.0.inhibit
+net      tool-locked                           hm2_7i76e.0.7i76.0.0.input-09
+
+setp     lut_inhibit.function                  0x4
+net      tool-released                         lut_inhibit.in-0
+net      tool-locked                           lut_inhibit.in-1
+net      spindle-inhibit                       lut_inhibit.out                     spindle.0.inhibit
 
 setp     lut_toolchange.function               0x4
 net      spindle-is-running                    lut_toolchange.in-0
