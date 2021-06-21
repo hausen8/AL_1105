@@ -3,7 +3,7 @@ Last edited: 2021-06-20
 
 **CONFIGURATION NOTES**
 - All basic configuration is done in AL_1105.hal
-- AL1105_postgui.hal contains all connections to the pendand (Logitech F310 USB game controller), some buttons in a keyboard drawer and the PyVCP panel
+- AL1105_postgui.hal contains all connections to the pendand (Logitech F310 USB game controller), some buttons in a keyboard drawer and the pyVCP panel
 - Since many functions have multiple input options, AL_1105_postgui.hal is not sorted by input devices but by functions
 - HAL components are used with names instead of numbers so that they easily can be identified
 - ATTENTION: Please note that these settings may not match with your hardware! Do not use any of these parameters or settings unless you know what you are doing. I am not responsible for any malfunctions or damages of your CNC machine!
