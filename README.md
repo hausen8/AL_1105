@@ -13,3 +13,9 @@ Last edited: 2021-06-20
 - Logitech F310 USB game controller as pendant
 - Jianken JGL-80 ATC spindle with Omron MX2 inverter connected to PC via Modbus (RS485)
 - ColdEND minimum quantity lubrication controlled by LinuxCNC
+
+**DOCUMENTATION**
+- Pinout.pdf: Pinout of the MESA 7i76e and all Connectors
+- VFD-Parameter.pdf: Parameter set of Omron MX2 / Hitachi WJ200 with Jianken JGL-80/2.2R30-20
+- pyVCP_Tab1.png: Screenshot of the first pyVCP panel tab (spindle tab)
+- pyVCP_Tab2.png: Screenshot of the second pyVCP panel tab (coordinate system tab)
