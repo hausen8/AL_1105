@@ -1,5 +1,5 @@
 # AL_1105 machine configuration for LinuxCNC
-Last edited: 2021-06-20
+Last edited: 2021-06-21
 
 **CONFIGURATION NOTES**
 - All basic configuration is done in AL_1105.hal
