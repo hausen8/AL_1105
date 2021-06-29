@@ -100,27 +100,16 @@
             </label>
             <hbox>
                 <label>
-                    <text>"Tool released"</text>
-                    <width>"13"</width>
+                    <text>"Spindle inhibit"</text>
+                    <width>12</width>
                 </label>
-                <led>
-                    <halpin>"tool-released"</halpin>
-                    <size>20</size>
-                    <on_color>"#80b000"</on_color>
-                    <off_color>"#ff3000"</off_color>
-                </led>
-            </hbox>
-            <hbox>
-                <label>
-                    <text>"Tool clamped"</text>
-                    <width>"13"</width>
-                </label>
-                <led>
-                    <halpin>"tool-clamped"</halpin>
-                    <size>20</size>
-                    <on_color>"#80b000"</on_color>
-                    <off_color>"#ff3000"</off_color>
-                </led>
+                <rectled>
+                    <halpin>"spindle-inhibit"</halpin>
+                    <width>30</width>
+                    <height>30</height>
+                    <on_color>"#ff3000"</on_color>
+                    <off_color>"#80b000"</off_color>
+                </rectled>
             </hbox>
         </vbox>
         <vbox>

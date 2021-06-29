@@ -1,4 +1,4 @@
-# Last Edited: 21-06-20
+# Last Edited: 21-06-29
 # LinuxCNC Version: 2.8
 
 
@@ -241,9 +241,9 @@ net      toolchange-command                    lut_toolchange.in-1
 net      toolchange-trigger                    lut_toolchange.out
 
 setp     delay_cleaning.on-delay               0
-setp     delay_cleaning.off-delay              2
+setp     delay_cleaning.off-delay              1.5
 setp     delay_toolchange.on-delay             0
-setp     delay_toolchange.off-delay            3
+setp     delay_toolchange.off-delay            2
 
 net      toolchange-trigger                    toggle_toolchange.in
 net      toolchange-toggle                     toggle_toolchange.out               delay_toolchange.in

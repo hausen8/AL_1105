@@ -1,4 +1,4 @@
-# Last Edited: 21-06-20
+# Last Edited: 21-06-29
 # LinuxCNC Version: 2.8
 
 
@@ -221,7 +221,7 @@ addf     delay_led_toolchange        servo-thread
 addf     not_led_toolchange          servo-thread
 
 net      toolchange-command          hm2_7i76e.0.7i84.0.1.input-22
-net      toolchange-toggle           and_led_toolchange.in0
+net      spindle-inhibit             and_led_toolchange.in0
 
 net      led_toolchange-out          delay_led_toolchange.out          not_led_toolchange.in hm2_7i76e.0.7i84.0.1.output-12
 net      led_toolchange-not          not_led_toolchange.out            and_led_toolchange.in1
@@ -256,8 +256,7 @@ net      g55-btn                     halui.mdi-command-19              pyvcp.g55
 net      g56-btn                     halui.mdi-command-20              pyvcp.g56-button
 net      g57-btn                     halui.mdi-command-21              pyvcp.g57-button
 
-net      tool-released               pyvcp.tool-released
-net      tool-locked                 pyvcp.tool-clamped
+net      spindle-inhibit             pyvcp.spindle-inhibit
 
 
 
