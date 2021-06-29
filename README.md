@@ -8,7 +8,7 @@ Last edited: 2021-06-29
 - Since many functions have multiple input options, AL_1105_postgui.hal is not sorted by input devices but by functions
 - HAL components are used with names instead of numbers so that they easily can be identified
 
-**HARDWARE**
+**HARDWARE COMPONENTS**
 - MESA 7i76e Ethernet interface
 - Buttons and LEDs in a keyboard drawer connected with a MESA 7i84 via SmartSerial
 - Logitech F310 USB game controller as pendant
