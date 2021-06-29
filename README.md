@@ -1,5 +1,5 @@
 # AL_1105 machine configuration for LinuxCNC
-Last edited: 2021-06-21
+Last edited: 2021-06-29
 
 **CONFIGURATION NOTES**
 - ATTENTION: Please note that these settings may not match your hardware! Do not use any of these parameters or settings unless you know what you are doing. I am not responsible for any malfunctions or damages of your CNC machine!
