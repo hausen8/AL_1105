@@ -162,8 +162,8 @@ net      z-home-sw                             joint.2.home-sw-in               
 
 
 # ---------- SPINDLE ----------
-# watchdog.timeout-0 can not be set to 0.2s here. It may take too long to establish communication via USB.
-# Therefore it is initially set to a high value and later reduced in the postgui.hal
+# watchdog.timeout-0 can not be set to 0.2s here. It may take too long to establish communication via USB
+# therefore it is initially set to a high value and later reduced in the postgui.hal
 
 loadusr  -W wj200_vfd                          --device /dev/ttyUSB0 --baud 9600 --parity N --data 8 --stop 1
 

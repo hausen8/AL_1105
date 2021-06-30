@@ -1,4 +1,4 @@
-# Last Edited: 21-06-29
+# Last Edited: 21-06-30
 # LinuxCNC Version: 2.8
 
 
@@ -10,7 +10,8 @@ loadusr -W hal_input -KRAL F310
 
 
 # ---------- JOG SPEED / CONTROLLER PROTECTION ----------
-# btn-prot (output of btn-rgt or btn-lft) acts as a protection button that always needs to be pressed for any action
+# btn-prot (output of btn-rgt or btn-lft) is linked with AND to any other button
+# it acts as a protection button that always needs to be pressed for any action
 # preselection of maximum jog speed by pressing either btn-rgt, btn-lft or both buttons
 
 addf     mux_jog                     servo-thread
@@ -23,7 +24,20 @@ setp     mux_jog.in3                 8000
 
 net      btn-rgt                     input.0.btn-tr                    or_prot.in0 mux_jog.sel0
 net      btn-lft                     input.0.btn-tl                    or_prot.in1 mux_jog.sel1
-net      btn-prot                    or_prot.out                       halui.mode.manual and_on.in0 and_mist.in0 and_flood.in0 and_x.in0 and_y.in0 and_z.in0 and_home.in0 and_sp-start.in0 and_sp-stop.in0 and_sp-inc.in0 and_sp-dec.in0
+
+net      btn-prot                    or_prot.out
+net      btn-prot                    halui.mode.manual
+net      btn-prot                    and_on.in0
+net      btn-prot                    and_mist.in0
+net      btn-prot                    and_flood.in0
+net      btn-prot                    and_x.in0
+net      btn-prot                    and_y.in0
+net      btn-prot                    and_z.in0
+net      btn-prot                    and_home.in0
+net      btn-prot                    and_sp-start.in0
+net      btn-prot                    and_sp-stop.in0
+net      btn-prot                    and_sp-inc.in0
+net      btn-prot                    and_sp-dec.in0
 
 net      speed-out                   halui.axis.jog-speed              mux_jog.out
 
@@ -83,7 +97,7 @@ addf     delay_led_pause             servo-thread
 addf     not_led_pause               servo-thread
 addf     or_led                      servo-thread
 
-setp     delay_led_pause.on-delay        0.8
+setp     delay_led_pause.on-delay    0.8
 
 net      program-start               hm2_7i76e.0.7i84.0.1.input-17     and_start.in0
 net      program-stop                hm2_7i76e.0.7i84.0.1.input-19     halui.program.stop
@@ -173,7 +187,7 @@ net      btn-dec-vel                 hm2_7i76e.0.7i84.0.1.input-24     halui.fee
 
 
 # ---------- SPINDLE ----------
-# near is essential to convert positive and negative values into tru or false
+# near is essential to convert positive and negative values into true or false
 # or_sp-inc and or_sp-dec allows to use either game controller or keyboard drawer button for changing spindle speed
 
 addf     and_sp-start                servo-thread
@@ -213,7 +227,7 @@ net      spindle-decrease            or_sp-dec.out                     halui.spi
 
 
 # ---------- TOOLCHANGE ----------
-# toolchange-toggle is linked to a blink function to indicate that the tool holder is open
+# spindle-inhibit is linked to a blink function to indicate that the tool holder is not locked
 # blinking of toolchange LED is gained by a loopback of AND -> DELAY -> NOT
 
 addf     and_led_toolchange          servo-thread
@@ -263,6 +277,6 @@ net      spindle-inhibit             pyvcp.spindle-inhibit
 
 # ---------- DECREASE VFD WATCHDOG TIMEOUT ----------
 
-setp     watchdog.timeout-0          0.2
+setp     watchdog.timeout-0          0.4
 
 
