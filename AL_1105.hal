@@ -200,6 +200,8 @@ setp     watchdog.enable-in                    true
 
 
 # ---------- WATER COOLING ----------
+# start the coolant pump simultaneously with LinuxCNC
+# fans are only running as long as the spindle is running to prevent the spindle from cooling down too much during breaks
 
 setp     hm2_7i76e.0.7i76.0.0.output-00        true
 net      spindle-is-running                    hm2_7i76e.0.7i76.0.0.output-12
