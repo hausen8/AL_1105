@@ -279,6 +279,6 @@ net      spindle-inhibit                       pyvcp.spindle-inhibit
 
 # ---------- DECREASE VFD WATCHDOG TIMEOUT ----------
 
-setp     watchdog.timeout-0                    0.4
+setp     watchdog.timeout-0                    0.2
 
 
