@@ -33,7 +33,7 @@
                 <bgcolor>"#e5e5e5"</bgcolor>
                 <fillcolor>"#80b000"</fillcolor>
                 <halpin>"spindle-speed"</halpin>
-                <max_>24000</max_>
+                <max_>30000</max_>
             </bar>
             <label>
                 <text>" "</text>
