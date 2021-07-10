@@ -20,3 +20,7 @@ Last edited: 2021-07-10
 - VFD-Parameter.pdf: Omron MX2 / Hitachi WJ200 parameter set for Jianken JGL-80/2.2R30-20 spindle
 - pyVCP_Tab1.png: Screenshot of the first pyVCP panel tab (spindle tab)
 - pyVCP_Tab2.png: Screenshot of the second pyVCP panel tab (coordinate system tab)
+
+**TODO**
+- Adding spindle temperature threshold with comp the the E-Stop chain
+- Adding pressure switch to the E-Stop chain to monitor pneumatic
