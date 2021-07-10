@@ -11,8 +11,19 @@
                 <range1>0,50,"#80b000"</range1>
                 <range2>51,100,"#ffc000"</range2>
                 <range3>101,150,"#ff3000"</range3>
-                <halpin>"vfd-temperature"</halpin>
+                <halpin>"vfd-temp"</halpin>
                 <max_>150</max_>
+            </bar>
+            <label>
+                <text>"Spindle Temperature"</text>
+            </label>
+            <bar>
+                <bgcolor>"#e5e5e5"</bgcolor>
+                <fillcolor>"#00ff00"</fillcolor>
+                <range1>0,40,"#80b000"</range1>
+                <range2>40,50,"#ff3000"</range2>
+                <halpin>"spindle-temp"</halpin>
+                <max_>50</max_>
             </bar>
             <label>
                 <text>"Spindle Current"</text>

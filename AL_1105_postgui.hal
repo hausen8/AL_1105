@@ -247,9 +247,10 @@ net      led_toolchange-toogle                 and_led_toolchange.out           
 
 # ---------- PYVCP PANEL ----------
 
-net      vfd-temperature-bar                   wj200-vfd.0.heatsink-temp           pyvcp.vfd-temperature
-net      spindle-current-bar                   wj200-vfd.0.motor-current           pyvcp.spindle-current
-net      spindle-speed-bar                     spindle.0.speed-out                 pyvcp.spindle-speed
+net      vfd-temp                              pyvcp.vfd-temp
+net      spindle-current                       pyvcp.spindle-current
+net      spindle-rpm                           pyvcp.spindle-speed
+net      spindle-ntc-temp                      pyvcp.spindle-temp
 
 net      spindle-warmup-btn                    halui.mdi-command-03                pyvcp.warmup-button
 net      spindle-start-btn                     halui.mdi-command-04                pyvcp.start-button
@@ -279,6 +280,6 @@ net      spindle-inhibit                       pyvcp.spindle-inhibit
 
 # ---------- DECREASE VFD WATCHDOG TIMEOUT ----------
 
-setp     watchdog.timeout-0                    0.2
+setp     watchdog.timeout-0                    0.4
 
 
