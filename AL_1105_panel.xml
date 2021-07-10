@@ -20,8 +20,9 @@
             <bar>
                 <bgcolor>"#e5e5e5"</bgcolor>
                 <fillcolor>"#00ff00"</fillcolor>
-                <range1>0,40,"#80b000"</range1>
-                <range2>40,50,"#ff3000"</range2>
+                <range1>0,30,"#80b000"</range1>
+                <range2>31,40,"#ffc000"</range2>
+                <range3>41,50,"#ff3000"</range3>
                 <halpin>"spindle-temp"</halpin>
                 <max_>50</max_>
             </bar>
