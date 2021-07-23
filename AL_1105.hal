@@ -5,7 +5,7 @@
 
 # ---------- REALTIME COMPONENTS ----------
 # load all realtime components with names instead of numbers so that their function can easily be identified
-# realtime components that are used for postgui purposes are are added to the servo thread at their corresponding point in AL_1105_postgui.hal
+# realtime components that are used for postgui purposes are added to the servo thread at their corresponding point in AL_1105_postgui.hal
 
 loadrt   [KINS]KINEMATICS
 loadrt   [EMCMOT]EMCMOT                        servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS
