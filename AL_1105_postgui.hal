@@ -1,4 +1,4 @@
-# Last Edited: 21-07-10
+# Last Edited: 21-07-27
 # LinuxCNC Version: 2.8
 
 
@@ -249,8 +249,9 @@ net      led_toolchange-toogle                 and_led_toolchange.out           
 
 net      vfd-temp                              pyvcp.vfd-temp
 net      spindle-current                       pyvcp.spindle-current
-net      spindle-rpm                           pyvcp.spindle-speed
-net      spindle-ntc-temp                      pyvcp.spindle-temp
+net      spindle-rpm                           pyvcp.spindle-rpm
+net      spindle-ntc-temp                      pyvcp.spindle-ntc-temp
+net      spindle-inhibit                       pyvcp.spindle-inhibit
 
 net      spindle-warmup-btn                    halui.mdi-command-03                pyvcp.warmup-button
 net      spindle-start-btn                     halui.mdi-command-04                pyvcp.start-button
@@ -273,9 +274,14 @@ net      g55-btn                               halui.mdi-command-19             
 net      g56-btn                               halui.mdi-command-20                pyvcp.g56-button
 net      g57-btn                               halui.mdi-command-21                pyvcp.g57-button
 
-net      spindle-inhibit                       pyvcp.spindle-inhibit
+net      estop-ext                             pyvcp.estop-ext
+net      estop-vfd-watchdog                    pyvcp.estop-vfd-watchdog
+net      estop-vfd-error                       pyvcp.estop-vfd-error
+net      estop-pneumatic                       pyvcp.estop-pneumatic
 
-
+net      amp-fault-x                           pyvcp.amp-fault-x
+net      amp-fault-y                           pyvcp.amp-fault-y
+net      amp-fault-z                           pyvcp.amp-fault-z
 
 
 # ---------- DECREASE VFD WATCHDOG TIMEOUT ----------

@@ -1,11 +1,11 @@
-# Last Edited: 21-07-10
+# Last Edited: 21-07-27
 # LinuxCNC Version: 2.8
 
 
 
 # ---------- REALTIME COMPONENTS ----------
 # load all realtime components with names instead of numbers so that their function can easily be identified
-# realtime components that are used for postgui purposes are added to the servo thread at their corresponding point in AL_1105_postgui.hal
+# realtime components that are used for postgui purposes are are added to the servo thread at their corresponding point in AL_1105_postgui.hal
 
 loadrt   [KINS]KINEMATICS
 loadrt   [EMCMOT]EMCMOT                        servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS
@@ -24,7 +24,6 @@ loadrt   not                                   names=not_led_pause,not_led_toolc
 loadrt   near                                  names=near_sp-start,near_sp-stop,near_sp-inc,near_sp-dec
 loadrt   mux4                                  names=mux_jog
 loadrt   sum2                                  names=sum_jog-z
-loadrt   message                               names=msg_vfd-watchdog,msg_vfd-error messages="VFD communication lost,VFD Error (check display)"
 loadrt   lincurve                              personality=6
 
 addf     hm2_7i76e.0.read                      servo-thread
@@ -43,8 +42,6 @@ addf     lut_inhibit                           servo-thread
 addf     lut_toolchange                        servo-thread
 addf     lut_estop                             servo-thread
 addf     toggle_toolchange                     servo-thread
-addf     msg_vfd-watchdog                      servo-thread
-addf     msg_vfd-error                         servo-thread
 addf     lincurve.0                            servo-thread
 addf     hm2_7i76e.0.write                     servo-thread
 setp     hm2_7i76e.0.dpll.01.timer-us          -50
@@ -280,19 +277,19 @@ net      cone-cleaning                         delay_cleaning.out               
 
 
 # ---------- ESTOP ----------
-# estop-watchdog-timeout and estop-vfd-error generate error messages that are displayed in LinuxCNC
-# therefor watchdog signal must be inverted by msg_vfd-watchdog.edge 0
+# estop will be triggered by the following events:
+# - VFD communication via RS485 lost
+# - error report from VFD
+# - pushing the emergency stop switch
+# - pneumatic pressure below 4.5 bar
 
-setp     lut_estop.function                    0x20
+setp     lut_estop.function                    0x2000
 
-net      estop-watchdog-timeout                lut_estop.in-0                      watchdog.ok-out
+net      estop-vfd-watchdog                    lut_estop.in-0                      watchdog.ok-out
 net      estop-vfd-error                       lut_estop.in-1                      wj200-vfd.0.is-alarm
 net      estop-ext                             lut_estop.in-2                      hm2_7i76e.0.7i76.0.0.input-24
+net      estop-pneumatic                       lut_estop.in-3                      hm2_7i76e.0.7i76.0.0.input-07
 net      estop-signal                          lut_estop.out                       iocontrol.0.emc-enable-in
-
-setp     msg_vfd-watchdog.edge                 0
-net      estop-watchdog-timeout                msg_vfd-watchdog.trigger
-net      estop-vfd-error                       msg_vfd-error.trigger
 
 
 
