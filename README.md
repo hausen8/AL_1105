@@ -23,5 +23,5 @@ Last edited: 2021-07-27
 - pyVCP_Tab3.png: Screenshot of the pyVCP *E-Stop* tab
 
 **TODO**
-- Exchanging the spindle temperature lincurve for the thermistor function
+- Trying to get *thermistor.so* and exchange the spindle temperature lincurve for the thermistor HAL component
 - Adding spindle temperature threshold with comp the the E-Stop chain
