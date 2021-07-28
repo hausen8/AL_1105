@@ -1,4 +1,4 @@
-# Last Edited: 21-07-27
+# Last Edited: 21-07-28
 # LinuxCNC Version: 2.8
 
 
@@ -216,6 +216,22 @@ setp     lincurve.0.y-val-05                   50
 
 net      spindle-ntc-raw                       hm2_7i76e.0.7i76.0.0.analogin3      lincurve.0.in
 net      spindle-ntc-temp                      lincurve.0.out
+
+# http://linuxcnc.org/docs/2.8/html/man/man1/thermistor.1.html
+# unlike the documentation states, the HAL component "thermistor" does not exist in v2.8
+# LinuxCNC stops loading with "/usr/lib/linuxcnc/modules/thermistor.so not found"
+
+# loadrt   thermistor                            names=ntc_spindle
+# addf     ntc_spindle                           servo-thread
+
+# setp     ntc_spindle.t0-c                      25.0
+# setp     ntc_spindle.r0                        10000
+# setp     ntc_spindle.beta                      3950
+# setp     ntc_spindle.r-other                   10000
+# setp     ntc_spindle.v-total                   24.0
+
+# net      spindle-ntc-raw                       hm2_7i76e.0.7i76.0.0.analogin3      ntc_spindle.v-thermistor
+# net      spindle-ntc-temp                      ntc_spindle.temperature-c
 
 
 
