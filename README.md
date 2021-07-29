@@ -1,5 +1,5 @@
 # AL_1105 machine configuration for LinuxCNC
-Last edited: 2021-07-27
+Last edited: 2021-07-29
 
 **CONFIGURATION NOTES**
 - ATTENTION: Please note that these settings may not match your hardware! Do not use any of these parameters or settings unless you know what you are doing. I am not responsible for any malfunctions or damages of your CNC machine!
@@ -21,7 +21,3 @@ Last edited: 2021-07-27
 - pyVCP_Tab1.png: Screenshot of the pyVCP *Spindle* tab
 - pyVCP_Tab2.png: Screenshot of the pyVCP *Coordinates* tab
 - pyVCP_Tab3.png: Screenshot of the pyVCP *E-Stop* tab
-
-**TODO**
-- Trying to get *thermistor.so* and exchange the spindle temperature lincurve for the thermistor HAL component
-- Adding spindle temperature threshold with comp the the E-Stop chain
