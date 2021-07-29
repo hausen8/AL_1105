@@ -1,4 +1,4 @@
-# Last Edited: 21-07-28
+# Last Edited: 21-07-29
 # LinuxCNC Version: 2.8
 
 
@@ -12,37 +12,39 @@ loadrt   [EMCMOT]EMCMOT                        servo_period_nsec=[EMCMOT]SERVO_P
 loadrt   hostmot2
 loadrt   hm2_eth                               board_ip="192.168.1.121" config=" num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=10xxxx"
 setp     hm2_7i76e.0.watchdog.timeout_ns       5000000
-loadrt   watchdog                              num_inputs=1
-loadrt   pid                                   names=pid.x,pid.y,pid.z,pid.s
-loadrt   timedelay                             names=delay_cleaning,delay_toolchange,delay_enable,delay_led_pause,delay_led_toolchange
-loadrt   lut5                                  names=lut_inhibit,lut_toolchange,lut_estop
-loadrt   or2                                   names=or_prot,or_on,or_led,or_mist,or_flood,or_sp-inc,or_sp-dec
 loadrt   and2                                  names=and_on,and_start,and_led_pause,and_mist,and_flood,and_x,and_y,and_z,and_home,and_sp-start,and_sp-stop,and_sp-inc,and_sp-dec,and_led_toolchange
+loadrt   comp                                  names=comp_temp
+loadrt   lut5                                  names=lut_inhibit,lut_toolchange,lut_estop
+loadrt   mux4                                  names=mux_jog
+loadrt   near                                  names=near_sp-start,near_sp-stop,near_sp-inc,near_sp-dec
+loadrt   not                                   names=not_led_pause,not_led_toolchange
+loadrt   offset                                names=offset_ntc
+loadrt   or2                                   names=or_prot,or_on,or_led,or_mist,or_flood,or_sp-inc,or_sp-dec
+loadrt   pid                                   names=pid.x,pid.y,pid.z,pid.s
+loadrt   sum2                                  names=sum_jog-z
+loadrt   timedelay                             names=delay_cleaning,delay_toolchange,delay_enable,delay_led_pause,delay_led_toolchange
 loadrt   toggle                                names=toggle_toolchange,toggle_on,toggle_pause,toggle_mist,toggle_flood
 loadrt   toggle2nist                           names=nist_on,nist_pause,nist_mist,nist_flood
-loadrt   not                                   names=not_led_pause,not_led_toolchange
-loadrt   near                                  names=near_sp-start,near_sp-stop,near_sp-inc,near_sp-dec
-loadrt   mux4                                  names=mux_jog
-loadrt   sum2                                  names=sum_jog-z
-loadrt   lincurve                              personality=6
+loadrt   watchdog                              num_inputs=1
 
 addf     hm2_7i76e.0.read                      servo-thread
 addf     motion-command-handler                servo-thread
 addf     motion-controller                     servo-thread
-addf     watchdog.process                      servo-thread
-addf     watchdog.set-timeouts                 servo-thread
-addf     pid.x.do-pid-calcs                    servo-thread
-addf     pid.y.do-pid-calcs                    servo-thread
-addf     pid.z.do-pid-calcs                    servo-thread
-addf     pid.s.do-pid-calcs                    servo-thread
+addf     comp_temp                             servo-thread
 addf     delay_cleaning                        servo-thread
 addf     delay_toolchange                      servo-thread
 addf     delay_enable                          servo-thread
 addf     lut_inhibit                           servo-thread
 addf     lut_toolchange                        servo-thread
 addf     lut_estop                             servo-thread
+addf     offset_ntc.update-feedback            servo-thread
+addf     pid.x.do-pid-calcs                    servo-thread
+addf     pid.y.do-pid-calcs                    servo-thread
+addf     pid.z.do-pid-calcs                    servo-thread
+addf     pid.s.do-pid-calcs                    servo-thread
 addf     toggle_toolchange                     servo-thread
-addf     lincurve.0                            servo-thread
+addf     watchdog.process                      servo-thread
+addf     watchdog.set-timeouts                 servo-thread
 addf     hm2_7i76e.0.write                     servo-thread
 setp     hm2_7i76e.0.dpll.01.timer-us          -50
 setp     hm2_7i76e.0.stepgen.timer-number      1
@@ -201,37 +203,27 @@ net      vfd-temp                              wj200-vfd.0.heatsink-temp
 setp     watchdog.timeout-0                    1.5
 setp     watchdog.enable-in                    true
 
-setp     lincurve.0.x-val-00                   5.664
-setp     lincurve.0.y-val-00                   0
-setp     lincurve.0.x-val-01                   8.029
-setp     lincurve.0.y-val-01                   10
-setp     lincurve.0.x-val-02                   10.661
-setp     lincurve.0.y-val-02                   20
-setp     lincurve.0.x-val-03                   13.299
-setp     lincurve.0.y-val-03                   30
-setp     lincurve.0.x-val-04                   15.677
-setp     lincurve.0.y-val-04                   40
-setp     lincurve.0.x-val-05                   17.663
-setp     lincurve.0.y-val-05                   50
 
-net      spindle-ntc-raw                       hm2_7i76e.0.7i76.0.0.analogin3      lincurve.0.in
-net      spindle-ntc-temp                      lincurve.0.out
 
-# http://linuxcnc.org/docs/2.8/html/man/man1/thermistor.1.html
-# unlike the documentation states, the HAL component "thermistor" does not exist in v2.8
-# LinuxCNC stops loading with "/usr/lib/linuxcnc/modules/thermistor.so not found"
+# ---------- SPINDLE NTC ----------
+# NTC: 103F3950, R25: 10K 1% B: 3950K
+# the spindle's NTC is connected with a 10K voltage divider to a thermistor userspace component
+# comp_temp compares the computed temperature with a maximum temperature to trigger estop
 
-# loadrt   thermistor                            names=ntc_spindle
-# addf     ntc_spindle                           servo-thread
+loadusr  -W thermistor
 
-# setp     ntc_spindle.t0-c                      25.0
-# setp     ntc_spindle.r0                        10000
-# setp     ntc_spindle.beta                      3950
-# setp     ntc_spindle.r-other                   10000
-# setp     ntc_spindle.v-total                   24.0
+setp     thermistor.0.t0-c                     [NTC]NTC_TEMP
+setp     thermistor.0.r0                       [NTC]NTC_RES
+setp     thermistor.0.beta                     [NTC]NTC_BETA
+setp     thermistor.0.r-other                  [NTC]VDIV_RES
+setp     thermistor.0.v-total                  [NTC]NTC_VOLTAGE
+setp     offset_ntc.fb-in                      [NTC]NTC_VOLTAGE
+setp     comp_temp.in0                         [NTC]NTC_MAX_TEMP
 
-# net      spindle-ntc-raw                       hm2_7i76e.0.7i76.0.0.analogin3      ntc_spindle.v-thermistor
-# net      spindle-ntc-temp                      ntc_spindle.temperature-c
+net      spindle-ntc-voltage-raw               offset_ntc.offset                   hm2_7i76e.0.7i76.0.0.analogin3
+net      spindle-ntc-voltage-drop              offset_ntc.fb-out                   thermistor.0.v-thermistor
+net      spindle-ntc-temp                      thermistor.0.temperature-c          comp_temp.in1
+net      spindle-ntc-res                       thermistor.0.resistance
 
 
 
@@ -298,6 +290,7 @@ net      cone-cleaning                         delay_cleaning.out               
 # - error report from VFD
 # - pushing the emergency stop switch
 # - pneumatic pressure below 4.5 bar
+# - spindle temperature above 50°C
 
 setp     lut_estop.function                    0x2000
 
@@ -305,6 +298,7 @@ net      estop-vfd-watchdog                    lut_estop.in-0                   
 net      estop-vfd-error                       lut_estop.in-1                      wj200-vfd.0.is-alarm
 net      estop-ext                             lut_estop.in-2                      hm2_7i76e.0.7i76.0.0.input-24
 net      estop-pneumatic                       lut_estop.in-3                      hm2_7i76e.0.7i76.0.0.input-07
+net      estop-ntc-over-temp                   lut_estop.in-4                      comp_temp.out
 net      estop-signal                          lut_estop.out                       iocontrol.0.emc-enable-in
 
 

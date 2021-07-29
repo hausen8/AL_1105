@@ -215,6 +215,19 @@
                     <off_color>"#80b000"</off_color>
                 </rectled>
             </hbox>
+            <hbox>
+                <label>
+                    <text>"Spindle Temperature"</text>
+                    <width>18</width>
+                </label>
+                <rectled>
+                    <halpin>"estop-ntc-over-temp"</halpin>
+                    <width>25</width>
+                    <height>25</height>
+                    <on_color>"#ff3000"</on_color>
+                    <off_color>"#80b000"</off_color>
+                </rectled>
+            </hbox>
             <label>
                 <text>" "</text>
             </label>
