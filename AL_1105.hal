@@ -206,7 +206,7 @@ setp     watchdog.enable-in                    true
 # ---------- SPINDLE NTC ----------
 # NTC: 103F3950, R25: 10K 1% B: 3950K
 # analogin2: 24V fieldvoltage (since hm2_7i76e.0.7i76.0.0.fieldvoltage is too noisy)
-# analogin3: the spindle's NTC is connected with a 10K voltage divider to a thermistor userspace component
+# analogin3: output of voltage divider (spindle NTC / 10K resistor)
 # offset_ntc is required since we don't need the output voltage but the voltage drop
 # comp_temp compares the computed temperature with a maximum temperature to trigger estop
 
