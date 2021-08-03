@@ -1,16 +1,16 @@
-# Last Edited: 21-07-29
+# Last Edited: 21-08-03
 # LinuxCNC Version: 2.8
 
 
 
 # ---------- REALTIME COMPONENTS ----------
 # load all realtime components with names instead of numbers so that their function can easily be identified
-# realtime components that are used for postgui purposes are are added to the servo thread at their corresponding point in AL_1105_postgui.hal
+# realtime components that are used in AL_1105_postgui.hal are added to the servo thread at their corresponding position
 
 loadrt   [KINS]KINEMATICS
 loadrt   [EMCMOT]EMCMOT                        servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS
 loadrt   hostmot2
-loadrt   hm2_eth                               board_ip="192.168.1.121" config=" num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=10xxxx"
+loadrt   hm2_eth                               board_ip="192.168.1.121" config=" num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=20xxxx"
 setp     hm2_7i76e.0.watchdog.timeout_ns       5000000
 loadrt   and2                                  names=and_on,and_start,and_led_pause,and_mist,and_flood,and_x,and_y,and_z,and_home,and_sp-start,and_sp-stop,and_sp-inc,and_sp-dec,and_led_toolchange
 loadrt   comp                                  names=comp_temp
@@ -164,9 +164,7 @@ net      z-home-sw                             joint.2.home-sw-in               
 
 # ---------- SPINDLE ----------
 # watchdog.timeout-0 can not be set to 0.2s here. It may take too long to establish communication via USB
-# therefore it is initially set to a high value and later reduced in the postgui.hal
-# the spindle's NTC is connected to hm2_7i76e.0.7i76.0.0.analogin3 with a 10K voltage divider
-# lincurve converts the measured voltage to degrees Celsius
+# therefore it is initially set to a high value and later reduced in postgui.hal
 
 loadusr  -W wj200_vfd                          --device /dev/ttyUSB0 --baud 9600 --parity N --data 8 --stop 1
 
@@ -207,7 +205,9 @@ setp     watchdog.enable-in                    true
 
 # ---------- SPINDLE NTC ----------
 # NTC: 103F3950, R25: 10K 1% B: 3950K
-# the spindle's NTC is connected with a 10K voltage divider to a thermistor userspace component
+# analogin2: 24V fieldvoltage (since hm2_7i76e.0.7i76.0.0.fieldvoltage is quite noisy)
+# analogin3: the spindle's NTC is connected with a 10K voltage divider to a thermistor userspace component
+# offset_ntc is required since we don't need the output voltage but the voltage drop
 # comp_temp compares the computed temperature with a maximum temperature to trigger estop
 
 loadusr  -W thermistor
@@ -216,14 +216,14 @@ setp     thermistor.0.t0-c                     [NTC]NTC_TEMP
 setp     thermistor.0.r0                       [NTC]NTC_RES
 setp     thermistor.0.beta                     [NTC]NTC_BETA
 setp     thermistor.0.r-other                  [NTC]VDIV_RES
-setp     thermistor.0.v-total                  [NTC]NTC_VOLTAGE
-setp     offset_ntc.fb-in                      [NTC]NTC_VOLTAGE
 setp     comp_temp.in0                         [NTC]NTC_MAX_TEMP
 
-net      spindle-ntc-voltage-raw               offset_ntc.offset                   hm2_7i76e.0.7i76.0.0.analogin3
-net      spindle-ntc-voltage-drop              offset_ntc.fb-out                   thermistor.0.v-thermistor
-net      spindle-ntc-temp                      thermistor.0.temperature-c          comp_temp.in1
-net      spindle-ntc-res                       thermistor.0.resistance
+net      field-voltage                         offset_ntc.fb-in                    hm2_7i76e.0.7i76.0.0.analogin2
+net      ntc-voltage-raw                       offset_ntc.offset                   hm2_7i76e.0.7i76.0.0.analogin3
+net      ntc-voltage-drop                      offset_ntc.fb-out                   thermistor.0.v-thermistor
+
+net      field-voltage                         thermistor.0.v-total
+net      spindle-temp                          thermistor.0.temperature-c          comp_temp.in1
 
 
 
