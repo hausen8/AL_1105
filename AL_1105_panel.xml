@@ -1,274 +1,101 @@
 <pyvcp>
     <tabs>
         <names>["Spindle", "Coordinates", "E-Stop"]</names>
+        <!-- Spindle tab -->
         <vbox>
-            <label>
-                <text>"VFD Temperature"</text>
-            </label>
-            <bar>
-                <bgcolor>"#e5e5e5"</bgcolor>
-                <fillcolor>"#00ff00"</fillcolor>
+            <label text="VFD Temperature" />
+            <bar bgcolor="#e5e5e5" fillcolor="#00ff00" max_="150" halpin="vfd-temp">
                 <range1>0,50,"#80b000"</range1>
                 <range2>51,100,"#ffc000"</range2>
                 <range3>101,150,"#ff3000"</range3>
-                <halpin>"vfd-temp"</halpin>
-                <max_>150</max_>
             </bar>
-            <label>
-                <text>"Spindle Temperature"</text>
-            </label>
-            <bar>
-                <bgcolor>"#e5e5e5"</bgcolor>
-                <fillcolor>"#00ff00"</fillcolor>
+            <label text="Spindle Temperature" />
+            <bar bgcolor="#e5e5e5" fillcolor="#00ff00" max_="50" halpin="spindle-temp">
                 <range1>0,30,"#80b000"</range1>
                 <range2>31,40,"#ffc000"</range2>
                 <range3>41,50,"#ff3000"</range3>
-                <halpin>"spindle-ntc-temp"</halpin>
-                <max_>50</max_>
             </bar>
-            <label>
-                <text>"Spindle Current"</text>
-            </label>
-            <bar>
-                <bgcolor>"#e5e5e5"</bgcolor>
-                <fillcolor>"#00ff00"</fillcolor>
+            <label text="Spindle Current" />
+            <bar bgcolor="#e5e5e5" fillcolor="#00ff00" max_="10" halpin="spindle-current">
                 <range1>0,3.3,"#80b000"</range1>
                 <range2>3.4,6.6,"#ffc000"</range2>
                 <range3>6.7,10,"#ff3000"</range3>
-                <halpin>"spindle-current"</halpin>
-                <max_>10</max_>
             </bar>
-            <label>
-                <text>"Spindle Speed"</text>
-            </label>
-            <bar>
-                <bgcolor>"#e5e5e5"</bgcolor>
-                <fillcolor>"#80b000"</fillcolor>
-                <halpin>"spindle-rpm"</halpin>
-                <max_>30000</max_>
-            </bar>
-            <label>
-                <text>" "</text>
-            </label>
-            <button>
-                <halpin>"warmup-button"</halpin>
-                <text>"Warm-up"</text>
-            </button>
-            <button>
-                <halpin>"start-button"</halpin>
-                <text>"Start"</text>
-            </button>
-            <button>
-                <halpin>"stop-button"</halpin>
-                <text>"Stop"</text>
-            </button>
-            <label>
-                <text>" "</text>
-            </label>
+            <label text="Spindle Speed" />
+            <bar bgcolor="#e5e5e5" fillcolor="#80b000" max_="30000" halpin="spindle-rpm" />
+            <label text=" " />
+            <button text="Warm-up" halpin="warmup-button" />
+            <button text="Start" halpin="start-button" />
+            <button text="Stop" halpin="stop-button" />
+            <label text=" " />
             <hbox>
-                <button>
-                    <halpin>"8000-button"</halpin>
-                    <text>" 8000 "</text>
-                </button>
-                <button>
-                    <halpin>"10000-button"</halpin>
-                    <text>"10000"</text>
-                </button>
-                <button>
-                    <halpin>"12000-button"</halpin>
-                    <text>"12000"</text>
-                </button>
+                <button text=" 8000 " halpin="8000-button" />
+                <button text="10000" halpin="10000-button" />
+                <button text="12000" halpin="12000-button" />
             </hbox>
             <hbox>
-                <button>
-                    <halpin>"14000-button"</halpin>
-                    <text>"14000"</text>
-                </button>
-                <button>
-                    <halpin>"16000-button"</halpin>
-                    <text>"16000"</text>
-                </button>
-                <button>
-                    <halpin>"18000-button"</halpin>
-                    <text>"18000"</text>
-                </button>
+                <button text="14000" halpin="14000-button" />
+                <button text="16000" halpin="16000-button" />
+                <button text="18000" halpin="18000-button" />
             </hbox>
             <hbox>
-                <button>
-                    <halpin>"20000-button"</halpin>
-                    <text>"20000"</text>
-                </button>
-                <button>
-                    <halpin>"22000-button"</halpin>
-                    <text>"22000"</text>
-                </button>
-                <button>
-                    <halpin>"24000-button"</halpin>
-                    <text>"24000"</text>
-                </button>
+                <button text="20000" halpin="20000-button" />
+                <button text="22000" halpin="22000-button" />
+                <button text="24000" halpin="24000-button" />
             </hbox>
-            <label>
-                <text>" "</text>
-            </label>
+            <label text=" " />
             <hbox>
-                <label>
-                    <text>"Spindle inhibit"</text>
-                    <width>20</width>
-                </label>
-                <rectled>
-                    <halpin>"spindle-inhibit"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#ff3000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </rectled>
+                <label width="20" text="Spindle inhibit" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="spindle-inhibit" />
             </hbox>
         </vbox>
+        <!-- Coordinates tab -->
         <vbox>
             <hbox>
-                <button>
-                    <halpin>"touch-x-button"</halpin>
-                    <text>"P0 X0"</text>
-                    <width>5</width>
-                </button>
-                <button>
-                    <halpin>"touch-y-button"</halpin>
-                    <text>"P0 Y0"</text>
-                    <width>5</width>
-                </button>
-                <button>
-                    <halpin>"touch-z-button"</halpin>
-                    <text>"P0 Z0"</text>
-                    <width>5</width>
-                </button>
+                <button width="5" text="P0 X0" halpin="touch-x-button" />
+                <button width="5" text="P0 Y0" halpin="touch-y-button" />
+                <button width="5" text="P0 Z0" halpin="touch-z-button" />
             </hbox>
-            <label>
-                <text>" "</text>
-            </label>
-            <button>
-                <halpin>"g54-button"</halpin>
-                <text>"G54"</text>
-            </button>
-            <button>
-                <halpin>"g55-button"</halpin>
-                <text>"G55"</text>
-            </button>
-            <button>
-                <halpin>"g56-button"</halpin>
-                <text>"G56"</text>
-            </button>
-            <button>
-                <halpin>"g57-button"</halpin>
-                <text>"G57"</text>
-            </button>
+            <label text=" " />
+            <button text="G54" halpin="g54-button" />
+            <button text="G55" halpin="g55-button" />
+            <button text="G56" halpin="g56-button" />
+            <button text="G57" halpin="g57-button" />
         </vbox>
+        <!-- E-Stop tab -->
         <vbox>
             <hbox>
-                <label>
-                    <text>"Manual E-Stop"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"estop-ext"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#80b000"</on_color>
-                    <off_color>"#ff3000"</off_color>
-                </rectled>
+                <label width="18" text="Manual E-Stop" />
+                <rectled width="25" height="25" on_color="#80b000" off_color="#ff3000" halpin="estop-ext" />
             </hbox>
             <hbox>
-                <label>
-                    <text>"Pneumatic"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"estop-pneumatic"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#80b000"</on_color>
-                    <off_color>"#ff3000"</off_color>
-                </rectled>
+                <label width="18" text="Pneumatic" />
+                <rectled width="25" height="25" on_color="#80b000" off_color="#ff3000" halpin="estop-pneumatic" />
             </hbox>
             <hbox>
-                <label>
-                    <text>"VFD Watchdog"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"estop-vfd-watchdog"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#80b000"</on_color>
-                    <off_color>"#ff3000"</off_color>
-                </rectled>
+                <label width="18" text="VFD Watchdog" />
+                <rectled width="25" height="25" on_color="#80b000" off_color="#ff3000" halpin="estop-vfd-watchdog" />
             </hbox>
             <hbox>
-                <label>
-                    <text>"VFD Status"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"estop-vfd-error"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#ff3000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </rectled>
+                <label width="18" text="VFD Status" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="estop-vfd-error" />
             </hbox>
             <hbox>
-                <label>
-                    <text>"Spindle Temperature"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"estop-ntc-over-temp"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#ff3000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </rectled>
+                <label width="18" text="Spindle Temperature" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="estop-ntc-over-temp" />
             </hbox>
-            <label>
-                <text>" "</text>
-            </label>
+            <label text=" " />
             <hbox>
-                <label>
-                    <text>"X Driver"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"amp-fault-x"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#ff3000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </rectled>
+                <label width="18" text="X Driver" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="amp-fault-x" />
             </hbox>
             <hbox>
-                <label>
-                    <text>"Y Driver"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"amp-fault-y"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#ff3000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </rectled>
+                <label width="18" text="Y Driver" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="amp-fault-y" />
             </hbox>
             <hbox>
-                <label>
-                    <text>"Z Driver"</text>
-                    <width>18</width>
-                </label>
-                <rectled>
-                    <halpin>"amp-fault-z"</halpin>
-                    <width>25</width>
-                    <height>25</height>
-                    <on_color>"#ff3000"</on_color>
-                    <off_color>"#80b000"</off_color>
-                </rectled>
+                <label width="18" text="Z Driver" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="amp-fault-z" />
             </hbox>
         </vbox>
     </tabs>
