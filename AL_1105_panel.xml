@@ -1,3 +1,5 @@
+<!-- Last Edited: 21-08-19 -->
+<!-- LinuxCNC Version: 2.8 -->
 <pyvcp>
     <tabs>
         <names>["Spindle", "Coordinates", "E-Stop"]</names>
