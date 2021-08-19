@@ -8,11 +8,11 @@
             <bar>
                 <bgcolor>"#e5e5e5"</bgcolor>
                 <fillcolor>"#00ff00"</fillcolor>
-                <range1>0,50,"#80b000"</range1>
-                <range2>51,100,"#ffc000"</range2>
-                <range3>101,150,"#ff3000"</range3>
+                <range1>0,33,"#80b000"</range1>
+                <range2>34,66,"#ffc000"</range2>
+                <range3>67,100,"#ff3000"</range3>
                 <halpin>"vfd-temp"</halpin>
-                <max_>150</max_>
+                <max_>100</max_>
             </bar>
             <label>
                 <text>"Spindle Temperature"</text>

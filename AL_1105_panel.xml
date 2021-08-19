@@ -6,10 +6,10 @@
         <!-- Spindle tab -->
         <vbox>
             <label text="VFD Temperature" />
-            <bar bgcolor="#e5e5e5" fillcolor="#00ff00" max_="150" halpin="vfd-temp">
-                <range1>0,50,"#80b000"</range1>
-                <range2>51,100,"#ffc000"</range2>
-                <range3>101,150,"#ff3000"</range3>
+            <bar bgcolor="#e5e5e5" fillcolor="#00ff00" max_="100" halpin="vfd-temp">
+                <range1>0,33,"#80b000"</range1>
+                <range2>34,66,"#ffc000"</range2>
+                <range3>67,100,"#ff3000"</range3>
             </bar>
             <label text="Spindle Temperature" />
             <bar bgcolor="#e5e5e5" fillcolor="#00ff00" max_="50" halpin="spindle-temp">
