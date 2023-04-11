@@ -6,7 +6,7 @@ Last edited: 2021-08-19
 - All basic configuration is done in AL_1105.hal
 - AL1105_postgui.hal contains all connections to the pendand (Logitech F310 USB game controller), some buttons in a keyboard drawer and the PyVCP panel
 - Since many functions have multiple input options, AL_1105_postgui.hal is not sorted by input devices but by functions (i.e. mist, toolchange)
-- HAL components are used with names instead of numbers so that they easily can be identified
+- HAL components are loaded with names instead of numbers so that they easily can be identified
 
 **HARDWARE COMPONENTS**
 - MESA 7i76e Ethernet interface
