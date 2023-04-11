@@ -18,6 +18,7 @@ Last edited: 2021-08-19
 **DOCUMENTATION**
 - Pinout.pdf: Pinout of the MESA 7i76e and all Connectors (just to have all information at one place)
 - VFD-Parameter.pdf: Omron MX2 / Hitachi WJ200 parameter set for Jianken JGL-80/2.2R30-20 spindle
+- Probe_accuracy: Screenshot of repeating accuracy after 6 times probing a 25mm pocket
 - pyVCP_Tab1.png: Screenshot of the pyVCP *Spindle* tab
 - pyVCP_Tab2.png: Screenshot of the pyVCP *Easy Probe* tab
 - pyVCP_Tab3.png: Screenshot of the pyVCP *E-Stop* tab
