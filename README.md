@@ -19,5 +19,5 @@ Last edited: 2021-08-19
 - Pinout.pdf: Pinout of the MESA 7i76e and all Connectors (just to have all information at one place)
 - VFD-Parameter.pdf: Omron MX2 / Hitachi WJ200 parameter set for Jianken JGL-80/2.2R30-20 spindle
 - pyVCP_Tab1.png: Screenshot of the pyVCP *Spindle* tab
-- pyVCP_Tab2.png: Screenshot of the pyVCP *Coordinates* tab
+- pyVCP_Tab2.png: Screenshot of the pyVCP *Easy Probe* tab
 - pyVCP_Tab3.png: Screenshot of the pyVCP *E-Stop* tab
