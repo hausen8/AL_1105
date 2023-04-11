@@ -1,42 +1,58 @@
-# Last Edited: 21-08-03
+# Last Edited: 23-04-11
 # LinuxCNC Version: 2.8
 
 
 
-# ---------- REALTIME COMPONENTS ----------
-# load all realtime components with names instead of numbers so that their function can easily be identified
-# realtime components that are used in AL_1105_postgui.hal are added to the servo thread at their corresponding position
+# -------------------------------------------- REALTIME COMPONENTS --------------------------------------------
+# Load RT components with names (in alphabetical order) instead of numbers so that their function can easily be identified
+# Critical RT components should be added to the servo-thread between hm2_7i76e.0.read and hm2_7i76e.0.write to get processed within this loop.
+# sserial_port_0=NNNNNN: While N defines whether a smart serial channel is active or not (0 = active, x = inactive)
+# If applicable, the digit also defines the data mode of the device connected to this channel (in this case the 7i76e itself)
+# RT components that are used in AL_1105_postgui.hal are added to the servo thread at their corresponding position
 
 loadrt   [KINS]KINEMATICS
 loadrt   [EMCMOT]EMCMOT                        servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS
 loadrt   hostmot2
-loadrt   hm2_eth                               board_ip="192.168.1.121" config=" num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=20xxxx"
+loadrt   hm2_eth                               board_ip="192.168.1.121" config="num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=20xxxx"
 setp     hm2_7i76e.0.watchdog.timeout_ns       5000000
-loadrt   and2                                  names=and_on,and_start,and_led_pause,and_mist,and_flood,and_x,and_y,and_z,and_home,and_sp-start,and_sp-stop,and_sp-inc,and_sp-dec,and_led_toolchange
-loadrt   comp                                  names=comp_temp
+
+loadrt   and2                                  names=and_flood,and_home,and_led-pause,and_led-toolchange,and_mist,and_on,and_probe1,and_probe2,and_probe3,and_sp-dec,and_sp-inc,and_sp-start,and_sp-stop,and_start,and_x0,and_y0,and_z0
+loadrt   comp                                  names=comp_probe1,comp_probe2,comp_probe3,comp_temp,comp_tool1,comp_tool2,comp_tool3
+loadrt   conv_u32_float                        names=conv_toolnum
+loadrt   dbounce                               names=dbounce_probe
 loadrt   lut5                                  names=lut_inhibit,lut_toolchange,lut_estop
 loadrt   mux4                                  names=mux_jog
-loadrt   near                                  names=near_sp-start,near_sp-stop,near_sp-inc,near_sp-dec
-loadrt   not                                   names=not_led_pause,not_led_toolchange
+loadrt   not                                   names=not_act_cal,not_led-pause,not_led-toolchange
 loadrt   offset                                names=offset_ntc
-loadrt   or2                                   names=or_prot,or_on,or_led,or_mist,or_flood,or_sp-inc,or_sp-dec
+loadrt   or2                                   names=or_act_cal,or_flood,or_led-pause,or_mist,or_on,or_prot,or_sp-inc,or_sp-dec,or_x0,or_y0,or_z0
 loadrt   pid                                   names=pid.x,pid.y,pid.z,pid.s
 loadrt   sum2                                  names=sum_jog-z
-loadrt   timedelay                             names=delay_cleaning,delay_toolchange,delay_enable,delay_led_pause,delay_led_toolchange
-loadrt   toggle                                names=toggle_toolchange,toggle_on,toggle_pause,toggle_mist,toggle_flood
-loadrt   toggle2nist                           names=nist_on,nist_pause,nist_mist,nist_flood
+loadrt   timedelay                             names=delay_cleaning,delay_enable,delay_led-pause,delay_led-toolchange,delay_toolchange
+loadrt   toggle                                names=toggle_flood,toggle_mist,toggle_on,toggle_pause,toggle_toolchange
+loadrt   toggle2nist                           names=nist_flood,nist_mist,nist_on,nist_pause
 loadrt   watchdog                              num_inputs=1
 
 addf     hm2_7i76e.0.read                      servo-thread
-addf     motion-command-handler                servo-thread
-addf     motion-controller                     servo-thread
+addf     and_probe1                            servo-thread
+addf     and_probe2                            servo-thread
+addf     and_probe3                            servo-thread
 addf     comp_temp                             servo-thread
+addf     comp_probe1                           servo-thread
+addf     comp_probe2                           servo-thread
+addf     comp_probe3                           servo-thread
+addf     comp_tool1                            servo-thread
+addf     comp_tool2                            servo-thread
+addf     comp_tool3                            servo-thread
+addf     conv_toolnum                          servo-thread
+addf     dbounce_probe                         servo-thread
 addf     delay_cleaning                        servo-thread
-addf     delay_toolchange                      servo-thread
 addf     delay_enable                          servo-thread
+addf     delay_toolchange                      servo-thread
 addf     lut_inhibit                           servo-thread
 addf     lut_toolchange                        servo-thread
 addf     lut_estop                             servo-thread
+addf     motion-command-handler                servo-thread
+addf     motion-controller                     servo-thread
 addf     offset_ntc.update-feedback            servo-thread
 addf     pid.x.do-pid-calcs                    servo-thread
 addf     pid.y.do-pid-calcs                    servo-thread
@@ -51,7 +67,11 @@ setp     hm2_7i76e.0.stepgen.timer-number      1
 
 
 
-# ---------- AXIS X / JOINT 0 ----------
+# -------------------------------------------- AXIS X / JOINT 0 --------------------------------------------
+# Pgain = 1000 and FF1 = 1 is required for the Mesa card loopback.
+# hm2_7i76e.0.stepgen.01.position-fb transmits the current position to LinuxCNC
+# (by simply telling which step commands have been output)
+# so that the PID controller can respond to a position following error
 
 setp     pid.x.Pgain                           [JOINT_0]P
 setp     pid.x.Igain                           [JOINT_0]I
@@ -75,20 +95,17 @@ setp     hm2_7i76e.0.stepgen.01.control-type   1
 setp     hm2_7i76e.0.stepgen.01.maxaccel       [JOINT_0]STEPGEN_MAXACCEL
 setp     hm2_7i76e.0.stepgen.01.maxvel         [JOINT_0]STEPGEN_MAXVEL
 
-net      x-index-enable                        pid.x.index-enable
 net      x-enable                              pid.x.enable
-net      x-pos-cmd                             pid.x.command
+net      x-pos-cmd                             pid.x.command                   <=    joint.0.motor-pos-cmd
 net      x-pos-fb                              pid.x.feedback
-net      x-pos-cmd                             joint.0.motor-pos-cmd
-net      x-vel-cmd                             joint.0.vel-cmd
-net      x-output                              pid.x.output                        hm2_7i76e.0.stepgen.01.velocity-cmd
-net      x-pos-fb                              joint.0.motor-pos-fb                hm2_7i76e.0.stepgen.01.position-fb
-net      x-enable                              joint.0.amp-enable-out              hm2_7i76e.0.stepgen.01.enable
-net      x-home-sw                             joint.0.home-sw-in                  hm2_7i76e.0.7i76.0.0.input-12-not
+net      x-output                              pid.x.output                    =>    hm2_7i76e.0.stepgen.01.velocity-cmd
+net      x-enable                              joint.0.amp-enable-out          =>    hm2_7i76e.0.stepgen.01.enable
+net      x-pos-fb                              joint.0.motor-pos-fb            <=    hm2_7i76e.0.stepgen.01.position-fb
+net      x-home-sw                             joint.0.home-sw-in              <=    hm2_7i76e.0.7i76.0.0.input-12-not
 
 
 
-# ---------- AXIS Y / JOINT 1 ----------
+# -------------------------------------------- AXIS Y / JOINT 1 --------------------------------------------
 
 setp     pid.y.Pgain                           [JOINT_1]P
 setp     pid.y.Igain                           [JOINT_1]I
@@ -112,20 +129,17 @@ setp     hm2_7i76e.0.stepgen.02.control-type   1
 setp     hm2_7i76e.0.stepgen.02.maxaccel       [JOINT_1]STEPGEN_MAXACCEL
 setp     hm2_7i76e.0.stepgen.02.maxvel         [JOINT_1]STEPGEN_MAXVEL
 
-net      y-index-enable                        pid.y.index-enable
 net      y-enable                              pid.y.enable
-net      y-pos-cmd                             pid.y.command
+net      y-pos-cmd                             pid.y.command                   <=    joint.1.motor-pos-cmd
 net      y-pos-fb                              pid.y.feedback
-net      y-pos-cmd                             joint.1.motor-pos-cmd
-net      y-vel-cmd                             joint.1.vel-cmd
-net      y-output                              pid.y.output                        hm2_7i76e.0.stepgen.02.velocity-cmd
-net      y-pos-fb                              joint.1.motor-pos-fb                hm2_7i76e.0.stepgen.02.position-fb
-net      y-enable                              joint.1.amp-enable-out              hm2_7i76e.0.stepgen.02.enable
-net      y-home-sw                             joint.1.home-sw-in                  hm2_7i76e.0.7i76.0.0.input-11-not
+net      y-output                              pid.y.output                    =>    hm2_7i76e.0.stepgen.02.velocity-cmd
+net      y-enable                              joint.1.amp-enable-out          =>    hm2_7i76e.0.stepgen.02.enable
+net      y-pos-fb                              joint.1.motor-pos-fb            <=    hm2_7i76e.0.stepgen.02.position-fb
+net      y-home-sw                             joint.1.home-sw-in              <=    hm2_7i76e.0.7i76.0.0.input-11-not
 
 
 
-# ---------- AXIS Z / JOINT 2 ----------
+# -------------------------------------------- AXIS Z / JOINT 2 --------------------------------------------
 
 setp     pid.z.Pgain                           [JOINT_2]P
 setp     pid.z.Igain                           [JOINT_2]I
@@ -149,22 +163,20 @@ setp     hm2_7i76e.0.stepgen.03.control-type   1
 setp     hm2_7i76e.0.stepgen.03.maxaccel       [JOINT_2]STEPGEN_MAXACCEL
 setp     hm2_7i76e.0.stepgen.03.maxvel         [JOINT_2]STEPGEN_MAXVEL
 
-net      z-index-enable                        pid.z.index-enable
 net      z-enable                              pid.z.enable
-net      z-pos-cmd                             pid.z.command
+net      z-pos-cmd                             pid.z.command                   <=    joint.2.motor-pos-cmd
 net      z-pos-fb                              pid.z.feedback
-net      z-pos-cmd                             joint.2.motor-pos-cmd
-net      z-vel-cmd                             joint.2.vel-cmd
-net      z-output                              pid.z.output                        hm2_7i76e.0.stepgen.03.velocity-cmd
-net      z-pos-fb                              joint.2.motor-pos-fb                hm2_7i76e.0.stepgen.03.position-fb
-net      z-enable                              joint.2.amp-enable-out              hm2_7i76e.0.stepgen.03.enable
-net      z-home-sw                             joint.2.home-sw-in                  hm2_7i76e.0.7i76.0.0.input-10-not
+net      z-output                              pid.z.output                    =>    hm2_7i76e.0.stepgen.03.velocity-cmd
+net      z-enable                              joint.2.amp-enable-out          =>    hm2_7i76e.0.stepgen.03.enable
+net      z-pos-fb                              joint.2.motor-pos-fb            <=    hm2_7i76e.0.stepgen.03.position-fb
+net      z-home-sw                             joint.2.home-sw-in              <=    hm2_7i76e.0.7i76.0.0.input-10-not
 
 
 
-# ---------- SPINDLE ----------
-# watchdog.timeout-0 can not be set to 0.2s here. It may take too long to establish communication via USB
-# therefore it is initially set to a high value and later reduced in postgui.hal
+# -------------------------------------------- SPINDLE --------------------------------------------
+# watchdog.timeout-0 can not be set to 0.2s here since it probably takes too long to establish communication via USB
+# Therefore it is initially set to a high value and will later be reduced in postgui.hal
+# spindle-rpm, spindle-current and vfd-temp are linked to the PYVCP SPINDLE TAB section of AL1105_postgui.hal
 
 loadusr  -W wj200_vfd                          --device /dev/ttyUSB0 --baud 9600 --parity N --data 8 --stop 1
 
@@ -182,18 +194,17 @@ setp     pid.s.deadband                        [SPINDLE_0]DEADBAND
 setp     pid.s.maxoutput                       [SPINDLE_0]MAX_OUTPUT
 setp     pid.s.error-previous-target           true
 
-net      spindle-index-enable                  pid.s.index-enable
 net      spindle-enable                        pid.s.enable
 net      spindle-vel-cmd-rpm                   pid.s.command
 net      spindle-vel-fb-rpm                    pid.s.feedback
 net      spindle-output                        pid.s.output
 
-net      spindle-enable                        spindle.0.on                        wj200-vfd.0.run
-net      spindle-vel-cmd-rps-abs               spindle.0.speed-out-rps-abs         wj200-vfd.0.commanded-frequency
-net      spindle-ccw                           spindle.0.reverse                   wj200-vfd.0.reverse
+net      spindle-enable                        spindle.0.on                    =>    wj200-vfd.0.run
+net      spindle-vel-cmd-rps-abs               spindle.0.speed-out-rps-abs     =>    wj200-vfd.0.commanded-frequency
+net      spindle-ccw                           spindle.0.reverse               =>    wj200-vfd.0.reverse
 net      spindle-rpm                           spindle.0.speed-out
-net      spindle-at-speed                      wj200-vfd.0.is-at-speed             spindle.0.at-speed
-net      spindle-watchdog                      wj200-vfd.0.watchdog-out            watchdog.input-0
+net      spindle-at-speed                      wj200-vfd.0.is-at-speed         =>    spindle.0.at-speed
+net      spindle-watchdog                      wj200-vfd.0.watchdog-out        =>    watchdog.input-0
 net      spindle-is-running                    wj200-vfd.0.is-running
 net      spindle-current                       wj200-vfd.0.motor-current
 net      vfd-temp                              wj200-vfd.0.heatsink-temp
@@ -203,7 +214,7 @@ setp     watchdog.enable-in                    true
 
 
 
-# ---------- SPINDLE NTC ----------
+# -------------------------------------------- SPINDLE NTC --------------------------------------------
 # NTC: 103F3950, R25: 10K 1% B: 3950K
 # analogin2: 24V fieldvoltage (since hm2_7i76e.0.7i76.0.0.fieldvoltage is too noisy)
 # analogin3: output of voltage divider (spindle NTC / 10K resistor)
@@ -218,52 +229,42 @@ setp     thermistor.0.beta                     [NTC]NTC_BETA
 setp     thermistor.0.r-other                  [NTC]VDIV_RES
 setp     comp_temp.in0                         [NTC]NTC_MAX_TEMP
 
-net      field-voltage                         offset_ntc.fb-in                    hm2_7i76e.0.7i76.0.0.analogin2
-net      ntc-voltage-raw                       offset_ntc.offset                   hm2_7i76e.0.7i76.0.0.analogin3
-net      ntc-voltage-drop                      offset_ntc.fb-out                   thermistor.0.v-thermistor
+net      field-voltage                         offset_ntc.fb-in                <=    hm2_7i76e.0.7i76.0.0.analogin2
+net      ntc-voltage-raw                       offset_ntc.offset               <=    hm2_7i76e.0.7i76.0.0.analogin3
+net      ntc-voltage-drop                      offset_ntc.fb-out               =>    thermistor.0.v-thermistor
 
 net      field-voltage                         thermistor.0.v-total
-net      spindle-temp                          thermistor.0.temperature-c          comp_temp.in1
+net      spindle-temp                          thermistor.0.temperature-c      =>    comp_temp.in1
 
 
 
-# ---------- WATER COOLING ----------
-# start the coolant pump simultaneously with LinuxCNC
-# fans are only running as long as the spindle is running to prevent the spindle from cooling down too much during breaks
+# -------------------------------------------- WATER COOLING --------------------------------------------
+# Start the coolant pump simultaneously with LinuxCNC
+# Fans are only running as long as the spindle is running to prevent the spindle from cooling down too much during breaks
+# A better solution would be to start the fans at a specific temperature
 
 setp     hm2_7i76e.0.7i76.0.0.output-00        true
 net      spindle-is-running                    hm2_7i76e.0.7i76.0.0.output-12
 
 
 
-# ---------- SEALING AIR ----------
+# -------------------------------------------- SEALING AIR --------------------------------------------
 
 net      spindle-is-running                    hm2_7i76e.0.7i76.0.0.output-08
 
 
 
-# ---------- TOOLCHANGE ----------
-# spindle-inhibit is connected to a sensor of the spindle and blocks the spindle as long as the tool holder is not locked
-# lut_inhibit prevents the spindle from running if no tool holder is inserted and locked
-# lut_inhibit.function = OR (0x1 + 0x2 + 0x4 = 0xb), see http://linuxcnc.org/docs/2.8/html/man/man9/lut5.9.html
+# -------------------------------------------- TOOLCHANGE --------------------------------------------
 # lut_toolchange only ouputs the toolchange trigger if spindle-is-running = FALSE
-# first trigger opens the tool holder and simultaneously starts cone cleaning for 2 seconds
-# second trigger starts cone cleaning for 2 seconds and locks the tool holder after 3 seconds (1 second after cone cleaning ends)
+# First trigger opens the tool holder and simultaneously starts cone cleaning for 1.2 seconds
+# Second trigger starts cone cleaning for 1.2 seconds and locks the tool holder 0.3 seconds thereafter
 
 loadusr  -W hal_manualtoolchange
 
-net      tool-change-request                   iocontrol.0.tool-change             hal_manualtoolchange.change
-net      tool-change-confirmed                 iocontrol.0.tool-changed            hal_manualtoolchange.changed
-net      tool-number                           iocontrol.0.tool-prep-number        hal_manualtoolchange.number
-net      tool-prepare-loopback                 iocontrol.0.tool-prepare            iocontrol.0.tool-prepared
-
-net      tool-released                         hm2_7i76e.0.7i76.0.0.input-08
-net      tool-locked                           hm2_7i76e.0.7i76.0.0.input-09
-
-setp     lut_inhibit.function                  0xb
-net      tool-released                         lut_inhibit.in-0
-net      tool-locked                           lut_inhibit.in-1
-net      spindle-inhibit                       lut_inhibit.out                     spindle.0.inhibit
+net      tool-change-request                   iocontrol.0.tool-change         =>    hal_manualtoolchange.change
+net      tool-change-confirmed                 iocontrol.0.tool-changed        <=    hal_manualtoolchange.changed
+net      tool-number                           iocontrol.0.tool-prep-number    =>    hal_manualtoolchange.number
+net      tool-prepare-loopback                 iocontrol.0.tool-prepare        =>    iocontrol.0.tool-prepared
 
 setp     lut_toolchange.function               0x4
 net      spindle-is-running                    lut_toolchange.in-0
@@ -271,70 +272,114 @@ net      toolchange-command                    lut_toolchange.in-1
 net      toolchange-trigger                    lut_toolchange.out
 
 setp     delay_cleaning.on-delay               0
-setp     delay_cleaning.off-delay              1.5
+setp     delay_cleaning.off-delay              1.2
 setp     delay_toolchange.on-delay             0
-setp     delay_toolchange.off-delay            2
+setp     delay_toolchange.off-delay            1.5
 
 net      toolchange-trigger                    toggle_toolchange.in
-net      toolchange-toggle                     toggle_toolchange.out               delay_toolchange.in
+net      toolchange-toggle                     toggle_toolchange.out           =>    delay_toolchange.in
 net      toolchange-trigger                    delay_cleaning.in
 
-net      toolchange                            delay_toolchange.out                hm2_7i76e.0.7i76.0.0.output-10
-net      cone-cleaning                         delay_cleaning.out                  hm2_7i76e.0.7i76.0.0.output-09
+net      toolchange                            delay_toolchange.out            =>    hm2_7i76e.0.7i76.0.0.output-10
+net      cone-cleaning                         delay_cleaning.out              =>    hm2_7i76e.0.7i76.0.0.output-09
 
 
 
-# ---------- ESTOP ----------
+# -------------------------------------------- SPINDLE INHIBIT --------------------------------------------
+# spindle-inhibit is active when either no tool is inserted and clamped or when a defined probe tool is selected
+# comp_probe1/2/3 checks if a probe tool is defined in AL1105.ini [PROBE] section
+# comp_tool1/2/3 checks if the selected tool is any of the defined probe tools
+# conv_toolnum is required by comp to convert halui.tool.number from u32 to float
+# lut_inhibit.function = OR, see http://linuxcnc.org/docs/2.8/html/man/man9/lut5.9.html
+
+setp     comp_probe1.in0                       0
+setp     comp_probe2.in0                       0
+setp     comp_probe3.in0                       0
+
+setp     comp_probe1.in1                       [PROBE]TOOL_NUMBER_1
+setp     comp_probe2.in1                       [PROBE]TOOL_NUMBER_2
+setp     comp_probe3.in1                       [PROBE]TOOL_NUMBER_3
+
+net      check-tool1-defined                   comp_probe1.out                 =>    and_probe1.in0
+net      check-tool2-defined                   comp_probe2.out                 =>    and_probe2.in0
+net      check-tool3-defined                   comp_probe3.out                 =>    and_probe3.in0
+
+setp     comp_tool1.in0                        [PROBE]TOOL_NUMBER_1
+setp     comp_tool2.in0                        [PROBE]TOOL_NUMBER_2
+setp     comp_tool3.in0                        [PROBE]TOOL_NUMBER_3
+
+net      tool-u32                              conv_toolnum.in                 <=    halui.tool.number
+net      tool-float                            conv_toolnum.out                =>    comp_tool1.in1 comp_tool2.in1 comp_tool3.in1
+
+net      check-tool1-active                    comp_tool1.equal                =>    and_probe1.in1
+net      check-tool2-active                    comp_tool2.equal                =>    and_probe2.in1
+net      check-tool3-active                    comp_tool3.equal                =>    and_probe3.in1
+
+setp     lut_inhibit.function                  0xf0ffb
+net      tool-released                         lut_inhibit.in-0                <=    hm2_7i76e.0.7i76.0.0.input-08
+net      tool-locked                           lut_inhibit.in-1                <=    hm2_7i76e.0.7i76.0.0.input-09
+net      probe1-inserted                       lut_inhibit.in-2                <=    and_probe1.out
+net      probe2-inserted                       lut_inhibit.in-3                <=    and_probe2.out
+net      probe3-inserted                       lut_inhibit.in-4                <=    and_probe3.out
+net      spindle-inhibit                       lut_inhibit.out                 =>    spindle.0.inhibit
+
+
+
+# -------------------------------------------- ESTOP --------------------------------------------
 # estop will be triggered by the following events:
 # - VFD communication via RS485 lost
 # - error report from VFD
 # - pushing the emergency stop switch
 # - pneumatic pressure below 4.5 bar
-# - spindle temperature above 50°C
+# - spindle temperature above 50�C
 
 setp     lut_estop.function                    0x2000
 
-net      estop-vfd-watchdog                    lut_estop.in-0                      watchdog.ok-out
-net      estop-vfd-error                       lut_estop.in-1                      wj200-vfd.0.is-alarm
-net      estop-ext                             lut_estop.in-2                      hm2_7i76e.0.7i76.0.0.input-24
-net      estop-pneumatic                       lut_estop.in-3                      hm2_7i76e.0.7i76.0.0.input-07
-net      estop-ntc-over-temp                   lut_estop.in-4                      comp_temp.out
-net      estop-signal                          lut_estop.out                       iocontrol.0.emc-enable-in
+net      estop-vfd-watchdog                    lut_estop.in-0                  <=    watchdog.ok-out
+net      estop-vfd-error                       lut_estop.in-1                  <=    wj200-vfd.0.is-alarm
+net      estop-ext                             lut_estop.in-2                  <=    hm2_7i76e.0.7i76.0.0.input-24
+net      estop-pneumatic                       lut_estop.in-3                  <=    hm2_7i76e.0.7i76.0.0.input-07
+net      estop-ntc-over-temp                   lut_estop.in-4                  <=    comp_temp.out
+net      estop-signal                          lut_estop.out                   =>    iocontrol.0.emc-enable-in
 
 
 
-# ---------- Z-AXIS BRAKE ----------
+# -------------------------------------------- Z-AXIS BRAKE --------------------------------------------
 
 net      x-enable                              hm2_7i76e.0.7i76.0.0.output-13
 
 
 
-# ---------- DRIVER ----------
-# enable-all is linked to pid.x.enable via delay to ensure that the Z brake has opened beforehand
+# -------------------------------------------- DRIVER --------------------------------------------
+# enable-all is linked to pid.x.enable with a delay to ensure that the Z brake has opened beforehand
 
-net      amp-fault-x                           joint.0.amp-fault-in                hm2_7i76e.0.7i76.0.0.input-25
-net      amp-fault-y                           joint.1.amp-fault-in                hm2_7i76e.0.7i76.0.0.input-26
-net      amp-fault-z                           joint.2.amp-fault-in                hm2_7i76e.0.7i76.0.0.input-27
+net      amp-fault-x                           joint.0.amp-fault-in            <=    hm2_7i76e.0.7i76.0.0.input-25
+net      amp-fault-y                           joint.1.amp-fault-in            <=    hm2_7i76e.0.7i76.0.0.input-26
+net      amp-fault-z                           joint.2.amp-fault-in            <=    hm2_7i76e.0.7i76.0.0.input-27
 
 setp     delay_enable.on-delay                 0.5
 setp     delay_enable.off-delay                0
 
 net      x-enable                              delay_enable.in
-net      enable-all                            delay_enable.out                    hm2_7i76e.0.7i76.0.0.output-14
+net      enable-all                            delay_enable.out                =>    hm2_7i76e.0.7i76.0.0.output-14
 
 
 
-# ---------- MIST/FLOOD ----------
+# -------------------------------------------- MIST/FLOOD --------------------------------------------
 # coolant-mist-2 is connected to the XLR socket and unused so far (can be used for additional purposes)
 
-net      coolant-mist                          iocontrol.0.coolant-mist            hm2_7i76e.0.7i76.0.0.output-04
-net      coolant-mist-2                                                            hm2_7i76e.0.7i76.0.0.output-03
-net      coolant-flood                         iocontrol.0.coolant-flood           hm2_7i76e.0.7i76.0.0.output-02
+net      coolant-mist                          iocontrol.0.coolant-mist        =>    hm2_7i76e.0.7i76.0.0.output-04
+net      coolant-mist-2                                                        =>    hm2_7i76e.0.7i76.0.0.output-03
+net      coolant-flood                         iocontrol.0.coolant-flood       =>    hm2_7i76e.0.7i76.0.0.output-02
 
 
 
-# ---------- PROBE ----------
+# -------------------------------------------- PROBE --------------------------------------------
+# For precise measuring, probe must be debounced. The delay time can be defined in AL1105.ini
 
-net      probe                                 motion.probe-input                  hm2_7i76e.0.7i76.0.0.input-13
+setp     dbounce_probe.delay                   [PROBE]DEBOUNCE_TIME
+
+net      probe-raw                             dbounce_probe.in                <=    hm2_7i76e.0.7i76.0.0.input-13-not
+net      probe-signal                          dbounce_probe.out               =>    motion.probe-input
 
 

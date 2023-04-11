@@ -1,49 +1,50 @@
-# Last Edited: 21-07-29
+# Last Edited: 23-04-11
 # LinuxCNC Version: 2.8
 
 
 
-# ---------- LOAD USB DEVICE ----------
+# -------------------------------------------- LOAD USB DEVICE --------------------------------------------
+# Load the Logitech F310 USB game controller. HAL-Pins start with input.0.xxx
 
 loadusr -W hal_input -KRAL F310
 
 
 
-# ---------- JOG SPEED / CONTROLLER PROTECTION ----------
-# btn-prot (output of btn-rgt or btn-lft) is linked with AND to any other button
-# it acts as a protection button that always needs to be pressed for any action
-# preselection of maximum jog speed by pressing either btn-rgt, btn-lft or both buttons
+# -------------------------------------------- JOG SPEED / CONTROLLER PROTECTION --------------------------------------------
+# btn-prot (output of btn-rgt or btn-lft) is linked with AND to any other button of the game controller
+# It acts as a protection button that always has to be pressed for any action
+# Preselection of maximum jog speed by pressing either btn-lft, btn-rgt or both buttons
 
 addf     mux_jog                               servo-thread
 addf     or_prot                               servo-thread
 
-setp     mux_jog.in0                           0
-setp     mux_jog.in1                           20
-setp     mux_jog.in2                           800
-setp     mux_jog.in3                           8000
-
-net      btn-rgt                               input.0.btn-tr                      or_prot.in0 mux_jog.sel0
-net      btn-lft                               input.0.btn-tl                      or_prot.in1 mux_jog.sel1
-
-net      btn-prot                              or_prot.out
-net      btn-prot                              halui.mode.manual
+net      btn-rgt                               or_prot.in0                     <=    input.0.btn-tr
+net      btn-lft                               or_prot.in1                     <=    input.0.btn-tl
+net      btn-prot                              or_prot.out                     =>    halui.mode.manual
 net      btn-prot                              and_on.in0
 net      btn-prot                              and_mist.in0
 net      btn-prot                              and_flood.in0
-net      btn-prot                              and_x.in0
-net      btn-prot                              and_y.in0
-net      btn-prot                              and_z.in0
+net      btn-prot                              and_x0.in0
+net      btn-prot                              and_y0.in0
+net      btn-prot                              and_z0.in0
 net      btn-prot                              and_home.in0
 net      btn-prot                              and_sp-start.in0
 net      btn-prot                              and_sp-stop.in0
 net      btn-prot                              and_sp-inc.in0
 net      btn-prot                              and_sp-dec.in0
 
-net      speed-out                             halui.axis.jog-speed                mux_jog.out
+setp     mux_jog.in0                           0
+setp     mux_jog.in1                           20
+setp     mux_jog.in2                           800
+setp     mux_jog.in3                           8000
+
+net      btn-rgt                               mux_jog.sel0
+net      btn-lft                               mux_jog.sel1
+net      speed-out                             mux_jog.out                     =>    halui.axis.jog-speed
 
 
 
-# ---------- JOYSTICKS ----------
+# -------------------------------------------- JOYSTICKS --------------------------------------------
 
 addf     sum_jog-z                             servo-thread
 
@@ -55,224 +56,280 @@ setp     input.0.abs-rz-offset                 1
 setp     input.0.abs-z-scale                   255
 setp     input.0.abs-rz-scale                  -255
 
-net      jog-x                                 halui.axis.x.analog                 input.0.abs-y-position
-net      jog-y                                 halui.axis.y.analog                 input.0.abs-rx-position
-net      jog-z-up                              sum_jog-z.in0                       input.0.abs-rz-position
-net      jog-z-down                            sum_jog-z.in1                       input.0.abs-z-position
-net      jog-z                                 halui.axis.z.analog                 sum_jog-z.out
+net      jog-x                                 input.0.abs-y-position          =>    halui.axis.x.analog
+net      jog-y                                 input.0.abs-rx-position         =>    halui.axis.y.analog
+net      jog-z-up                              input.0.abs-rz-position         =>    sum_jog-z.in0
+net      jog-z-down                            input.0.abs-z-position          =>    sum_jog-z.in1
+net      jog-z                                 sum_jog-z.out                   =>    halui.axis.z.analog
 
 
 
-# ---------- MACHINE ----------
+# -------------------------------------------- MACHINE --------------------------------------------
 # or_on allows to use game controller or keyboard drawer button
 # toggle_on adds a toggling function to the momentary button while nist_on turnes the machine on or of depending on its status
+# The second block only processes the input signal and thus could also be moved to AL1105.hal
 
-addf     or_on                                 servo-thread
 addf     and_on                                servo-thread
-addf     toggle_on                             servo-thread
 addf     nist_on                               servo-thread
+addf     or_on                                 servo-thread
+addf     toggle_on                             servo-thread
 
-net      machine-btn-prot                      input.0.btn-mode                    and_on.in1
-net      machine-btn-ctrl                      and_on.out                          or_on.in0
-net      machine-btn_keyb                      hm2_7i76e.0.7i84.0.1.input-16       or_on.in1
+net      machine-btn-prot                      and_on.in1                      <=    input.0.btn-mode
+net      machine-btn-ctrl                      or_on.in0                       <=    and_on.out
+net      machine-btn_keyb                      or_on.in1                       <=    hm2_7i76e.0.7i84.0.1.input-16
+net      machine-signal                        or_on.out                       =>
 
-net      machine-toggle                        or_on.out                           toggle_on.in
-net      machine-switch                        toggle_on.out                       nist_on.in
-net      machine-is-on                         halui.machine.is-on                 nist_on.is-on hm2_7i76e.0.7i84.0.1.output-08
-net      machine-on                            nist_on.on                          halui.machine.on
-net      machine-off                           nist_on.off                         halui.machine.off
+net      machine-signal                        toggle_on.in                    <=
+net      machine-toggle                        toggle_on.out                   =>    nist_on.in
+net      machine-on                            halui.machine.on                <=    nist_on.on
+net      machine-off                           halui.machine.off               <=    nist_on.off
+net      machine-is-on                         halui.machine.is-on             =>    nist_on.is-on
+net      machine-is-on                                                         =>    hm2_7i76e.0.7i84.0.1.output-08
 
 
 
-# ---------- PROGRAM ----------
+# -------------------------------------------- PROGRAM --------------------------------------------
 # program-is-idle enables the start button only if no programm is running or paused
-# toggle_pause and nist_pause are essential to switch between halui.program.pause and halui.program.resume
-# blinking of status LED while program is paused is gained by a loopback of AND -> DELAY -> NOT
+# toggle_pause and nist_pause are required to switch between halui.program.pause and halui.program.resume
+# Blinking of status LED while program is paused is gained by a loopback of AND -> DELAY -> NOT
 
-addf     toggle_pause                          servo-thread
-addf     nist_pause                            servo-thread
+addf     and_led-pause                         servo-thread
 addf     and_start                             servo-thread
-addf     and_led_pause                         servo-thread
-addf     delay_led_pause                       servo-thread
-addf     not_led_pause                         servo-thread
-addf     or_led                                servo-thread
+addf     delay_led-pause                       servo-thread
+addf     nist_pause                            servo-thread
+addf     not_led-pause                         servo-thread
+addf     or_led-pause                          servo-thread
+addf     toggle_pause                          servo-thread
 
-setp     delay_led_pause.on-delay              0.8
+setp     delay_led-pause.on-delay              0.8
 
-net      program-start                         hm2_7i76e.0.7i84.0.1.input-17       and_start.in0
-net      program-stop                          hm2_7i76e.0.7i84.0.1.input-19       halui.program.stop
-net      program-pause                         hm2_7i76e.0.7i84.0.1.input-18       toggle_pause.in
+net      program-start                         and_start.in0                   <=    hm2_7i76e.0.7i84.0.1.input-17
+net      program-stop                          halui.program.stop              <=    hm2_7i76e.0.7i84.0.1.input-19
+net      program-pause                         toggle_pause.in                 <=    hm2_7i76e.0.7i84.0.1.input-18
 
-net      program-is-idle                       halui.program.is-idle               and_start.in1
-net      program-is-starting                   and_start.out                       halui.program.run
-net      program-is-running                    halui.program.is-running            or_led.in0
+net      program-is-idle                       halui.program.is-idle           =>    and_start.in1
+net      program-is-starting                   halui.program.run               <=    and_start.out
+net      program-is-running                    halui.program.is-running        =>    or_led-pause.in0
 
-net      pause_switch                          toggle_pause.out                    nist_pause.in
-net      pause_on                              nist_pause.on                       halui.program.pause
-net      pause_off                             nist_pause.off                      halui.program.resume
-net      pause-is-on                           halui.program.is-paused             nist_pause.is-on and_led_pause.in0
+net      pause_switch                          toggle_pause.out                =>    nist_pause.in
+net      pause_on                              halui.program.pause             <=    nist_pause.on
+net      pause_off                             halui.program.resume            <=    nist_pause.off
+net      pause-is-on                           halui.program.is-paused         =>    nist_pause.is-on
+net      pause-is-on                                                           =>    and_led-pause.in0
 
-net      led_pause-out                         delay_led_pause.out                 not_led_pause.in or_led.in1
-net      led_pause-not                         not_led_pause.out                   and_led_pause.in1
-net      led_pause-toogle                      and_led_pause.out                   delay_led_pause.in
+net      led-pause-out                         delay_led-pause.out             =>    not_led-pause.in
+net      led-pause-out                                                         =>    or_led-pause.in1
+net      led-pause-not                         not_led-pause.out               =>    and_led-pause.in1
+net      led-pause-toogle                      and_led-pause.out               =>    delay_led-pause.in
 
-net      program-led                           or_led.out                          hm2_7i76e.0.7i84.0.1.output-09
+net      program-led                           or_led-pause.out                =>    hm2_7i76e.0.7i84.0.1.output-09
 
 
 
-# ---------- MIST ----------
+# -------------------------------------------- MIST --------------------------------------------
+# See MACHINE for details
 
-addf     or_mist                               servo-thread
 addf     and_mist                              servo-thread
-addf     toggle_mist                           servo-thread
 addf     nist_mist                             servo-thread
+addf     or_mist                               servo-thread
+addf     toggle_mist                           servo-thread
 
-net      mist-btn_prot                         input.0.btn-select                  and_mist.in1
-net      mist-btn-ctrl                         and_mist.out                        or_mist.in0
-net      mist-btn_keyb                         hm2_7i76e.0.7i84.0.1.input-20       or_mist.in1
+net      mist-btn_prot                         and_mist.in1                    <=    input.0.btn-select
+net      mist-btn-ctrl                         or_mist.in0                     <=    and_mist.out
+net      mist-btn_keyb                         or_mist.in1                     <=    hm2_7i76e.0.7i84.0.1.input-20
+net      mist-signal                           or_mist.out                     =>
 
-net      mist-toggle                           or_mist.out                         toggle_mist.in
-net      mist-switch                           toggle_mist.out                     nist_mist.in
-net      mist-is-on                            halui.mist.is-on                    nist_mist.is-on hm2_7i76e.0.7i84.0.1.output-10
-net      mist-on                               nist_mist.on                        halui.mist.on
-net      mist-off                              nist_mist.off                       halui.mist.off
+net      mist-signal                           toggle_mist.in                  <=
+net      mist-toggle                           toggle_mist.out                 =>    nist_mist.in
+net      mist-on                               halui.mist.on                   <=    nist_mist.on
+net      mist-off                              halui.mist.off                  <=    nist_mist.off
+net      mist-is-on                            halui.mist.is-on                =>    nist_mist.is-on
+net      mist-is-on                                                            =>    hm2_7i76e.0.7i84.0.1.output-10
 
 
 
-# ---------- FLOOD ----------
+# -------------------------------------------- FLOOD --------------------------------------------
+# See MACHINE for details
 
-addf     or_flood                              servo-thread
 addf     and_flood                             servo-thread
-addf     toggle_flood                          servo-thread
 addf     nist_flood                            servo-thread
+addf     or_flood                              servo-thread
+addf     toggle_flood                          servo-thread
 
-net      flood-btn_prot                        input.0.btn-start                   and_flood.in1
-net      flood-btn-ctrl                        and_flood.out                       or_flood.in0
-net      flood-btn_keyb                        hm2_7i76e.0.7i84.0.1.input-21       or_flood.in1
+net      flood-btn_prot                        and_flood.in1                   <=    input.0.btn-start
+net      flood-btn-ctrl                        or_flood.in0                    <=    and_flood.out
+net      flood-btn_keyb                        or_flood.in1                    <=    hm2_7i76e.0.7i84.0.1.input-21
+net      flood-signal                          or_flood.out                    =>
 
-net      flood-toggle                          or_flood.out                        toggle_flood.in
-net      flood-switch                          toggle_flood.out                    nist_flood.in
-net      flood-is-on                           halui.flood.is-on                   nist_flood.is-on hm2_7i76e.0.7i84.0.1.output-11
-net      flood-on                              nist_flood.on                       halui.flood.on
-net      flood-off                             nist_flood.off                      halui.flood.off
+net      flood-signal                          toggle_flood.in                 <=
+net      flood-toggle                          toggle_flood.out                =>    nist_flood.in
+net      flood-on                              halui.flood.on                  <=    nist_flood.on
+net      flood-off                             halui.flood.off                 <=    nist_flood.off
+net      flood-is-on                           halui.flood.is-on               =>    nist_flood.is-on
+net      flood-is-on                                                           =>    hm2_7i76e.0.7i84.0.1.output-11
 
 
 
-# ---------- TOUCH OFF / HOMING ----------
+# -------------------------------------------- TOUCH OFF / HOMING --------------------------------------------
+# or_x0, or_y0 and or_z0 are required to use signals from the game contoller as well as from the PyVCP panel
 
-addf     and_x                                 servo-thread
-addf     and_y                                 servo-thread
-addf     and_z                                 servo-thread
 addf     and_home                              servo-thread
+addf     and_x0                                servo-thread
+addf     and_y0                                servo-thread
+addf     and_z0                                servo-thread
+addf     or_x0                                 servo-thread
+addf     or_y0                                 servo-thread
+addf     or_z0                                 servo-thread
 
-net      button-x                              and_x.in1                           input.0.btn-x
-net      button-y                              and_y.in1                           input.0.btn-y
-net      button-z                              and_z.in1                           input.0.btn-a
-net      home-button                           and_home.in1                        input.0.btn-b
+net      button-x0                             and_x0.in1                      <=    input.0.btn-x
+net      button-y0                             and_y0.in1                      <=    input.0.btn-y
+net      button-z0                             and_z0.in1                      <=    input.0.btn-a
+net      home-button                           and_home.in1                    <=    input.0.btn-b
 
-net      touch-off-x                           halui.mdi-command-00                and_x.out
-net      touch-off-y                           halui.mdi-command-01                and_y.out
-net      touch-off-z                           halui.mdi-command-02                and_z.out
-net      home-all-axis                         halui.home-all                      and_home.out
+net      x0-from-controller                    and_x0.out                      =>    or_x0.in0
+net      y0-from-controller                    and_y0.out                      =>    or_y0.in0
+net      z0-from-controller                    and_z0.out                      =>    or_z0.in0
+
+net      touch-off-x                           or_x0.out                       =>    halui.mdi-command-00
+net      touch-off-y                           or_y0.out                       =>    halui.mdi-command-01
+net      touch-off-z                           or_z0.out                       =>    halui.mdi-command-02
+net      home-all-axis                         and_home.out                    =>    halui.home-all
 
 
 
-# ---------- FEED OVERRIDE ----------
+# -------------------------------------------- FEED OVERRIDE --------------------------------------------
 
 setp     halui.feed-override.scale             0.1
 
-net      btn-inc-vel                           hm2_7i76e.0.7i84.0.1.input-25       halui.feed-override.increase
-net      btn-dec-vel                           hm2_7i76e.0.7i84.0.1.input-24       halui.feed-override.decrease
+net      btn-inc-vel                           halui.feed-override.increase    <=    hm2_7i76e.0.7i84.0.1.input-25
+net      btn-dec-vel                           halui.feed-override.decrease    <=    hm2_7i76e.0.7i84.0.1.input-24
 
 
 
-# ---------- SPINDLE ----------
-# near is essential to convert positive and negative values into true or false
+# -------------------------------------------- SPINDLE --------------------------------------------
 # or_sp-inc and or_sp-dec allows to use either game controller or keyboard drawer button for changing spindle speed
 
-setp     halui.spindle.0.override.scale        0.1
-
+addf     and_sp-dec                            servo-thread
+addf     and_sp-inc                            servo-thread
 addf     and_sp-start                          servo-thread
 addf     and_sp-stop                           servo-thread
-addf     and_sp-inc                            servo-thread
-addf     and_sp-dec                            servo-thread
-addf     near_sp-start                         servo-thread
-addf     near_sp-stop                          servo-thread
-addf     near_sp-inc                           servo-thread
-addf     near_sp-dec                           servo-thread
 addf     or_sp-inc                             servo-thread
 addf     or_sp-dec                             servo-thread
 
-setp     near_sp-start.in1                     1
-setp     near_sp-stop.in1                      -1
-setp     near_sp-inc.in1                       -1
-setp     near_sp-dec.in1                       1
+setp     halui.spindle.0.override.scale        0.1
 
-net      spindle-switch                        input.0.abs-hat0x-position          near_sp-start.in2 near_sp-stop.in2
-net      spindle-speed                         input.0.abs-hat0y-position          near_sp-inc.in2 near_sp-dec.in2
+net      hat-rgt                               and_sp-start.in1                <=    input.0.abs-hat0x-is-pos
+net      hat-lft                               and_sp-stop.in1                 <=    input.0.abs-hat0x-is-neg
+net      hat-top                               and_sp-inc.in1                  <=    input.0.abs-hat0y-is-neg
+net      hat-btm                               and_sp-dec.in1                  <=    input.0.abs-hat0y-is-pos
 
-net      hat-rgt                               near_sp-start.out                   and_sp-start.in1
-net      hat-lft                               near_sp-stop.out                    and_sp-stop.in1
-net      hat-top                               near_sp-inc.out                     and_sp-inc.in1
-net      hat-btm                               near_sp-dec.out                     and_sp-dec.in1
+net      ctrl-btn-inc                          or_sp-inc.in0                   <=    and_sp-inc.out
+net      ctrl-btn-dec                          or_sp-dec.in0                   <=    and_sp-dec.out
+net      keyb-btn-inc                          or_sp-inc.in1                   <=    hm2_7i76e.0.7i84.0.1.input-27
+net      keyb-btn-dec                          or_sp-dec.in1                   <=    hm2_7i76e.0.7i84.0.1.input-26
 
-net      ctrl-btn-inc                          and_sp-inc.out                      or_sp-inc.in0
-net      ctrl-btn-dec                          and_sp-dec.out                      or_sp-dec.in0
-net      keyb-btn-inc                          hm2_7i76e.0.7i84.0.1.input-27       or_sp-inc.in1
-net      keyb-btn-dec                          hm2_7i76e.0.7i84.0.1.input-26       or_sp-dec.in1
-
-net      spindle-start                         and_sp-start.out                    halui.spindle.0.start
-net      spindle-stop                          and_sp-stop.out                     halui.spindle.0.stop
-net      spindle-increase                      or_sp-inc.out                       halui.spindle.0.override.increase
-net      spindle-decrease                      or_sp-dec.out                       halui.spindle.0.override.decrease
+net      spindle-start                         and_sp-start.out                =>    halui.spindle.0.start
+net      spindle-stop                          and_sp-stop.out                 =>    halui.spindle.0.stop
+net      spindle-increase                      or_sp-inc.out                   =>    halui.spindle.0.override.increase
+net      spindle-decrease                      or_sp-dec.out                   =>    halui.spindle.0.override.decrease
 
 
 
-# ---------- TOOLCHANGE ----------
-# spindle-inhibit is linked to a blink function to indicate that the tool holder is not locked
-# blinking of toolchange LED is gained by a loopback of AND -> DELAY -> NOT
+# -------------------------------------------- TOOLCHANGE --------------------------------------------
+# spindle-inhibit is defined in the SPINDLE INHIBIT section of AL1105.hal
+# The signal is high when either no tool is inserted and clamped or when a defined probe tool is selected
+# Blinking of toolchange LED is gained by a loopback of AND -> DELAY -> NOT
 
-addf     and_led_toolchange                    servo-thread
-addf     delay_led_toolchange                  servo-thread
-addf     not_led_toolchange                    servo-thread
+addf     and_led-toolchange                    servo-thread
+addf     delay_led-toolchange                  servo-thread
+addf     not_led-toolchange                    servo-thread
 
 net      toolchange-command                    hm2_7i76e.0.7i84.0.1.input-22
-net      spindle-inhibit                       and_led_toolchange.in0
+net      spindle-inhibit                       and_led-toolchange.in0
 
-net      led_toolchange-out                    delay_led_toolchange.out            not_led_toolchange.in hm2_7i76e.0.7i84.0.1.output-12
-net      led_toolchange-not                    not_led_toolchange.out              and_led_toolchange.in1
-net      led_toolchange-toogle                 and_led_toolchange.out              delay_led_toolchange.in
+net      led-toolchange-out                    delay_led-toolchange.out        =>    not_led-toolchange.in
+net      led-toolchange-out                                                    =>    hm2_7i76e.0.7i84.0.1.output-12
+net      led-toolchange-not                    not_led-toolchange.out          =>    and_led-toolchange.in1
+net      led-toolchange-toogle                 and_led-toolchange.out          =>    delay_led-toolchange.in
 
 
 
-# ---------- PYVCP PANEL ----------
+# -------------------------------------------- PYVCP SPINDLE TAB --------------------------------------------
 
 net      vfd-temp                              pyvcp.vfd-temp
 net      spindle-current                       pyvcp.spindle-current
 net      spindle-rpm                           pyvcp.spindle-rpm
-net      spindle-ntc-temp                      pyvcp.spindle-ntc-temp
-net      spindle-inhibit                       pyvcp.spindle-inhibit
+net      spindle-temp                          pyvcp.spindle-temp
+net      spindle-inhibit                       pyvcp.spindle-inhibit-1
 
-net      spindle-warmup-btn                    halui.mdi-command-03                pyvcp.warmup-button
-net      spindle-start-btn                     halui.mdi-command-04                pyvcp.start-button
-net      spindle-8000-btn                      halui.mdi-command-05                pyvcp.8000-button
-net      spindle-10000-btn                     halui.mdi-command-06                pyvcp.10000-button
-net      spindle-12000-btn                     halui.mdi-command-07                pyvcp.12000-button
-net      spindle-14000-btn                     halui.mdi-command-08                pyvcp.14000-button
-net      spindle-16000-btn                     halui.mdi-command-09                pyvcp.16000-button
-net      spindle-18000-btn                     halui.mdi-command-10                pyvcp.18000-button
-net      spindle-20000-btn                     halui.mdi-command-11                pyvcp.20000-button
-net      spindle-22000-btn                     halui.mdi-command-12                pyvcp.22000-button
-net      spindle-24000-btn                     halui.mdi-command-13                pyvcp.24000-button
-net      spindle-stop-btn                      halui.mdi-command-14                pyvcp.stop-button
+net      spindle-warmup                        pyvcp.warmup                    =>    halui.mdi-command-03
+net      spindle-m3s6000                       pyvcp.start                     =>    halui.mdi-command-04
+net      spindle-m3s8000                       pyvcp.s8000                     =>    halui.mdi-command-05
+net      spindle-m3s10000                      pyvcp.s10000                    =>    halui.mdi-command-06
+net      spindle-m3s12000                      pyvcp.s12000                    =>    halui.mdi-command-07
+net      spindle-m3s14000                      pyvcp.s14000                    =>    halui.mdi-command-08
+net      spindle-m3s16000                      pyvcp.s16000                    =>    halui.mdi-command-09
+net      spindle-m3s18000                      pyvcp.s18000                    =>    halui.mdi-command-10
+net      spindle-m3s20000                      pyvcp.s20000                    =>    halui.mdi-command-11
+net      spindle-m3s22000                      pyvcp.s22000                    =>    halui.mdi-command-12
+net      spindle-m3s24000                      pyvcp.s24000                    =>    halui.mdi-command-13
+net      spindle-m5                            pyvcp.stop                      =>    halui.mdi-command-14
 
-net      touch-x-btn                           halui.mdi-command-15                pyvcp.touch-x-button
-net      touch-y-btn                           halui.mdi-command-16                pyvcp.touch-y-button
-net      touch-z-btn                           halui.mdi-command-17                pyvcp.touch-z-button
-net      g54-btn                               halui.mdi-command-18                pyvcp.g54-button
-net      g55-btn                               halui.mdi-command-19                pyvcp.g55-button
-net      g56-btn                               halui.mdi-command-20                pyvcp.g56-button
-net      g57-btn                               halui.mdi-command-21                pyvcp.g57-button
+
+
+# -------------------------------------------- PYVCP EASY PROBE TAB --------------------------------------------
+# or_x0, or_y0 and or_z0 are defined in the TOUCH OFF / HOMING section above
+# pyvcp.act_calib has to be inverted for enabling pyvcp.probe-calib button in checked state
+# probe-signal is defined in the PROBE section of AL1105.hal
+# comp_probe1/2/3 are defined in the SPINDLE INHIBIT section of AL1105.hal and disable unused probe tool buttons
+# blank-1 through blank-3 are permanently disabled since they only keep our probe buttons in a grid
+
+addf     not_act_cal                           servo-thread
+addf     or_act_cal                            servo-thread
+
+net      coord-g54                             pyvcp.g54                       =>    halui.mdi-command-15
+net      coord-g55                             pyvcp.g55                       =>    halui.mdi-command-16
+net      coord-g56                             pyvcp.g56                       =>    halui.mdi-command-17
+net      coord-g57                             pyvcp.g57                       =>    halui.mdi-command-18
+net      coord-g58                             pyvcp.g58                       =>    halui.mdi-command-19
+net      coord-g59                             pyvcp.g59                       =>    halui.mdi-command-20
+net      coord-g591                            pyvcp.g591                      =>    halui.mdi-command-21
+net      coord-g592                            pyvcp.g592                      =>    halui.mdi-command-22
+net      coord-g593                            pyvcp.g593                      =>    halui.mdi-command-23
+net      coord-p0x0                            pyvcp.p0x0                      =>    or_x0.in1
+net      coord-p0y0                            pyvcp.p0y0                      =>    or_y0.in1
+net      coord-p0z0                            pyvcp.p0z0                      =>    or_z0.in1
+net      probe-tool-1                          pyvcp.tool1                     =>    halui.mdi-command-24
+net      probe-tool-2                          pyvcp.tool2                     =>    halui.mdi-command-25
+net      probe-tool-3                          pyvcp.tool3                     =>    halui.mdi-command-26
+net      probe_diameter                        pyvcp.probe_diameter
+net      probe_offset                          pyvcp.probe_offset
+net      probe-x                               pyvcp.probe-x                   =>    halui.mdi-command-27
+net      probe-minus-x                         pyvcp.probe-minus-x             =>    halui.mdi-command-28
+net      probe-y                               pyvcp.probe-y                   =>    halui.mdi-command-29
+net      probe-minus-y                         pyvcp.probe-minus-y             =>    halui.mdi-command-30
+net      probe-minus-z                         pyvcp.probe-minus-z             =>    halui.mdi-command-31
+net      probe-pocket                          pyvcp.probe-pocket              =>    halui.mdi-command-32
+net      probe-calibration                     pyvcp.probe-calib               =>    halui.mdi-command-33
+
+net      active_check                          pyvcp.act_calib                 =>    not_act_cal.in
+net      invert_check                          or_act_cal.in0                  =>    not_act_cal.out
+net      active_calib                          or_act_cal.out                  =>    pyvcp.probe-calib.disable
+
+net      disable-tool1                         comp_probe1.equal               =>    pyvcp.tool1.disable
+net      disable-tool2                         comp_probe2.equal               =>    pyvcp.tool2.disable
+net      disable-tool3                         comp_probe3.equal               =>    pyvcp.tool3.disable
+
+setp     pyvcp.blank-1.disable                 1
+setp     pyvcp.blank-2.disable                 1
+setp     pyvcp.blank-3.disable                 1
+
+net      probe-signal                          pyvcp.probe_led
+net      spindle-inhibit                       pyvcp.spindle-inhibit-2
+
+
+
+# -------------------------------------------- PYVCP E-STOP TAB --------------------------------------------
 
 net      estop-ext                             pyvcp.estop-ext
 net      estop-pneumatic                       pyvcp.estop-pneumatic
@@ -285,7 +342,9 @@ net      amp-fault-y                           pyvcp.amp-fault-y
 net      amp-fault-z                           pyvcp.amp-fault-z
 
 
-# ---------- DECREASE VFD WATCHDOG TIMEOUT ----------
+
+# -------------------------------------------- DECREASE VFD WATCHDOG TIMEOUT --------------------------------------------
+# Set watchdog.timeout-0 to its final value since it can't be done in AL1105.hal
 
 setp     watchdog.timeout-0                    0.4
 

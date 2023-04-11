@@ -1,8 +1,8 @@
-<!-- Last Edited: 21-08-19 -->
+<!-- Last Edited: 23-04-11 -->
 <!-- LinuxCNC Version: 2.8 -->
 <pyvcp>
     <tabs>
-        <names>["Spindle", "Coordinates", "E-Stop"]</names>
+        <names>["Spindle", "Easy Probe", "E-Stop"]</names>
         <!-- Spindle tab -->
         <vbox>
             <label text="VFD Temperature" />
@@ -26,43 +26,102 @@
             <label text="Spindle Speed" />
             <bar bgcolor="#e5e5e5" fillcolor="#80b000" max_="30000" halpin="spindle-rpm" />
             <label text=" " />
-            <button text="Warm-up" halpin="warmup-button" />
-            <button text="Start" halpin="start-button" />
-            <button text="Stop" halpin="stop-button" />
+            <button text="Warm-up" halpin="warmup" disable_pin="true" />
+            <button text="Start" halpin="start" disable_pin="true" />
+            <button text="Stop" halpin="stop" disable_pin="true" />
             <label text=" " />
             <hbox>
-                <button text=" 8000 " halpin="8000-button" />
-                <button text="10000" halpin="10000-button" />
-                <button text="12000" halpin="12000-button" />
+                <button width="5" text="8000" halpin="s8000" />
+                <button width="5" text="10000" halpin="s10000" />
+                <button width="5" text="12000" halpin="s12000" />
             </hbox>
             <hbox>
-                <button text="14000" halpin="14000-button" />
-                <button text="16000" halpin="16000-button" />
-                <button text="18000" halpin="18000-button" />
+                <button width="5" text="14000" halpin="s14000" />
+                <button width="5" text="16000" halpin="s16000" />
+                <button width="5" text="18000" halpin="s18000" />
             </hbox>
             <hbox>
-                <button text="20000" halpin="20000-button" />
-                <button text="22000" halpin="22000-button" />
-                <button text="24000" halpin="24000-button" />
+                <button width="5" text="20000" halpin="s20000" />
+                <button width="5" text="22000" halpin="s22000" />
+                <button width="5" text="24000" halpin="s24000" />
             </hbox>
             <label text=" " />
             <hbox>
                 <label width="20" text="Spindle inhibit" />
-                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="spindle-inhibit" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="spindle-inhibit-1" />
             </hbox>
         </vbox>
-        <!-- Coordinates tab -->
+        <!-- Easy Probe tab -->
         <vbox>
             <hbox>
-                <button width="5" text="P0 X0" halpin="touch-x-button" />
-                <button width="5" text="P0 Y0" halpin="touch-y-button" />
-                <button width="5" text="P0 Z0" halpin="touch-z-button" />
+                <button width="5" text="G54" halpin="g54" />
+                <button width="5" text="G55" halpin="g55" />
+                <button width="5" text="G56" halpin="g56" />
             </hbox>
-            <label text=" " />
-            <button text="G54" halpin="g54-button" />
-            <button text="G55" halpin="g55-button" />
-            <button text="G56" halpin="g56-button" />
-            <button text="G57" halpin="g57-button" />
+            <hbox>
+                <button width="5" text="G57" halpin="g57" />
+                <button width="5" text="G58" halpin="g58" />
+                <button width="5" text="G59" halpin="g59" />
+            </hbox>
+            <hbox>
+                <button width="5" text="G59.1" halpin="g591" />
+                <button width="5" text="G59.2" halpin="g592" />
+                <button width="5" text="G59.3" halpin="g593" />
+            </hbox>
+            <label font="Helvetica, 12" text=" " />
+            <hbox>
+                <button width="5" text="P0 X0" halpin="p0x0" />
+                <button width="5" text="P0 Y0" halpin="p0y0" />
+                <button width="5" text="P0 Z0" halpin="p0z0" />
+            </hbox>
+            <label font="Helvetica, 12" text=" " />
+            <hbox>
+                <button width="5" text="Tool 1" halpin="tool1" disable_pin="true" />
+                <button width="5" text="Tool 2" halpin="tool2" disable_pin="true" />
+                <button width="5" text="Tool 3" halpin="tool3" disable_pin="true" />
+            </hbox>
+            <label font="Helvetica, 12" text=" " />
+            <hbox>
+                <label text="Diameter" width="10" />
+                <spinbox width="10" min_="0" max_="100" initval="25" param_pin="1" format="2.3f" halpin="probe_diameter" />
+                <label text="mm" />
+            </hbox>
+            <label font="Helvetica, 1" text=" " />
+            <hbox>
+                <label text="Zero/Offset" width="10" />
+                <spinbox width="10" min_="-1000" max_="1000" initval="0" param_pin="1" format="2.3f" halpin="probe_offset" />
+                <label text="mm" />
+            </hbox>
+            <label font="Helvetica, 12" text=" " />
+            <hbox>
+                <button width="2" height="2" padx="10" text="" halpin="blank-1" relief="flat" disable_pin="true" />
+                <button width="2" height="2" padx="10" text="Y↑" halpin="probe-y" />
+            </hbox>
+            <hbox>
+                <button width="2" height="2" padx="10" text="←X" halpin="probe-minus-x" />
+                <button width="2" height="2" padx="10" text="O" halpin="probe-pocket" />
+                <button width="2" height="2" padx="10" text="X→" halpin="probe-x" />
+            </hbox>
+            <hbox>
+                <button width="2" height="2" padx="10" text="" halpin="blank-2" relief="flat" disable_pin="true" />
+                <button width="2" height="2" padx="10" text="Y↓" halpin="probe-minus-y" />
+                <button width="3" height="2" padx="23" text="" halpin="blank-3" relief="flat" disable_pin="true" />
+                <button width="2" height="2" padx="10" text="-Z" halpin="probe-minus-z" />
+            </hbox>
+            <label font="Helvetica, 12" text=" " />
+            <hbox>
+                <checkbutton width="8" halpin="act_calib" text="Activate " />
+                <button text="Calibration" halpin="probe-calib" disable_pin="true" />
+            </hbox>
+            <label font="Helvetica, 10" text=" " />
+            <hbox>
+                <label text="Probe Signal" width="11" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="probe_led" />
+            </hbox>
+            <hbox>
+                <label text="Spindle Inhibit" width="11" />
+                <rectled width="25" height="25" on_color="#ff3000" off_color="#80b000" halpin="spindle-inhibit-2" />
+            </hbox>
         </vbox>
         <!-- E-Stop tab -->
         <vbox>
@@ -102,6 +161,5 @@
         </vbox>
     </tabs>
 </pyvcp>
-
 
 
