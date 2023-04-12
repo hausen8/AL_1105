@@ -9,6 +9,7 @@ Last edited: 2023-04-11
 - HAL components are loaded with names instead of numbers so that they easily can be identified
 
 **HARDWARE COMPONENTS**
+- Sorotec Alu Line 1105
 - MESA 7i76e Ethernet interface
 - Buttons and LEDs in a keyboard drawer connected with a MESA 7i84 via SmartSerial
 - Logitech F310 USB game controller as pendant
