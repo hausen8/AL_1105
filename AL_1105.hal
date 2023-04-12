@@ -331,7 +331,7 @@ net      spindle-inhibit                       lut_inhibit.out                 =
 # - error report from VFD
 # - pushing the emergency stop switch
 # - pneumatic pressure below 4.5 bar
-# - spindle temperature above 50�C
+# - spindle temperature above 50°C
 
 setp     lut_estop.function                    0x2000
 
