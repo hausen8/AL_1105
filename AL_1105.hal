@@ -1,4 +1,4 @@
-# Last Edited: 23-04-11
+# Last Edited: 23-04-15
 # LinuxCNC Version: 2.8
 
 
@@ -20,7 +20,7 @@ loadrt   and2                                  names=and_flood,and_home,and_led-
 loadrt   comp                                  names=comp_probe1,comp_probe2,comp_probe3,comp_temp,comp_tool1,comp_tool2,comp_tool3
 loadrt   conv_u32_float                        names=conv_toolnum
 loadrt   dbounce                               names=dbounce_probe
-loadrt   lut5                                  names=lut_inhibit,lut_toolchange,lut_estop
+loadrt   lut5                                  names=lut_estop,lut_inhibit,lut_probe,lut_toolchange
 loadrt   mux4                                  names=mux_jog
 loadrt   not                                   names=not_act_cal,not_led-pause,not_led-toolchange
 loadrt   offset                                names=offset_ntc
@@ -48,9 +48,10 @@ addf     dbounce_probe                         servo-thread
 addf     delay_cleaning                        servo-thread
 addf     delay_enable                          servo-thread
 addf     delay_toolchange                      servo-thread
-addf     lut_inhibit                           servo-thread
-addf     lut_toolchange                        servo-thread
 addf     lut_estop                             servo-thread
+addf     lut_inhibit                           servo-thread
+addf     lut_probe                             servo-thread
+addf     lut_toolchange                        servo-thread
 addf     motion-command-handler                servo-thread
 addf     motion-controller                     servo-thread
 addf     offset_ntc.update-feedback            servo-thread
@@ -331,7 +332,7 @@ net      spindle-inhibit                       lut_inhibit.out                 =
 # - error report from VFD
 # - pushing the emergency stop switch
 # - pneumatic pressure below 4.5 bar
-# - spindle temperature above 50°C
+# - spindle temperature above 50�C
 
 setp     lut_estop.function                    0x2000
 
@@ -376,10 +377,15 @@ net      coolant-flood                         iocontrol.0.coolant-flood       =
 
 # -------------------------------------------- PROBE --------------------------------------------
 # For precise measuring, probe must be debounced. The delay time can be defined in AL1105.ini
+# lut_probe disables the probe signal as long as none of the defined probe tools is active
+# This way the probe tool can be hotplugged without triggering motion.probe-input
 
 setp     dbounce_probe.delay                   [PROBE]DEBOUNCE_TIME
-
 net      probe-raw                             dbounce_probe.in                <=    hm2_7i76e.0.7i76.0.0.input-13-not
-net      probe-signal                          dbounce_probe.out               =>    motion.probe-input
 
-
+setp     lut_probe.function                    0x228
+net      probe-debounced                       lut_probe.in-0                  <=    dbounce_probe.out
+net      probe1-inserted                       lut_probe.in-1
+net      probe2-inserted                       lut_probe.in-2
+net      probe3-inserted                       lut_probe.in-3
+net      probe-signal                          lut_probe.out                   =>    motion.probe-input
