@@ -377,7 +377,7 @@ net      coolant-flood                         iocontrol.0.coolant-flood       =
 
 # -------------------------------------------- PROBE --------------------------------------------
 # For precise measuring, probe must be debounced. The delay time can be defined in AL1105.ini
-# lut_probe disables the probe signal as long as none of the defined probe tools is active
+# lut_probe passes through the probe signal only as long as one of the defined probe tools is active
 # This way the probe tool can be hotplugged without triggering motion.probe-input
 
 setp     dbounce_probe.delay                   [PROBE]DEBOUNCE_TIME
