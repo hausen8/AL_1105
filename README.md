@@ -4,7 +4,7 @@ Last edited: 2023-04-11
 **CONFIGURATION NOTES**
 - ATTENTION: Please note that these settings may not match your hardware! Do not use any of these parameters or settings unless you know what you are doing. I am not responsible for any malfunctions or damages of your CNC machine!
 - All basic configuration is done in AL_1105.hal. AL1105_postgui.hal contains all connections to the pendand (Logitech F310 USB game controller), the keyboard drawer and the PyVCP panel
-- Since many functions have multiple input options, AL_1105_postgui.hal is not sorted by input devices but by functions (i.e. mist, toolchange)
+- Since many functions have multiple input options, AL_1105_postgui.hal is not sorted by input devices but by functions (i.e. mist, feed override or toolchange)
 - HAL components are loaded with names instead of numbers so that they easily can be identified
 - [easy]probe add-in can be found at https://github.com/hausen8/EasyProbe
 
