@@ -24,8 +24,8 @@ Last edited: 2023-04-11
 - pyVCP_Tab2.png: Screenshot of the pyVCP *Easy Probe* tab
 - pyVCP_Tab3.png: Screenshot of the pyVCP *E-Stop* tab
 
-![tab 1](https://github.com/hausen8/AL_1105/blob/2023-04-11/documentation/PyVCP-Tab1.png)
+![tab1](https://github.com/hausen8/AL_1105/blob/2023-04-11/documentation/PyVCP-Tab1.png)
 
-![tab 2](https://github.com/hausen8/AL_1105/blob/2023-04-11/documentation/PyVCP-Tab2.png)
+![tab2](https://github.com/hausen8/AL_1105/blob/2023-04-11/documentation/PyVCP-Tab2.png)
 
-![tab 3](https://github.com/hausen8/AL_1105/blob/2023-04-11/documentation/PyVCP-Tab3.png)
+![tab3](https://github.com/hausen8/AL_1105/blob/2023-04-11/documentation/PyVCP-Tab3.png)
