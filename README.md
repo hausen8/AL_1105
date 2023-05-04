@@ -11,8 +11,7 @@ Last edited: 2023-04-11
 
 **HARDWARE COMPONENTS**
 - Sorotec Alu Line 1105
-- MESA 7i76e Ethernet interface
-- Buttons and LEDs in a keyboard drawer connected with a MESA 7i84 via SmartSerial
+- MESA 7i76e Ethernet interface + 7i84 in keyboard drawer
 - Logitech F310 USB game controller as pendant
 - Jianken JGL-80 ATC spindle with Omron MX2 inverter connected to PC via Modbus (RS485)
 - ColdEND minimum quantity lubrication controlled by LinuxCNC
