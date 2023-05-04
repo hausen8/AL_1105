@@ -2,7 +2,7 @@
 Last edited: 2023-04-11
 
 **CONFIGURATION NOTES**
-- ATTENTION: Please note that this configuration has not been written for your machine! Do not use any of these parameters or settings unless you know what you are doing. I am not responsible for your troubles!
+- ATTENTION: Please note that this configuration has not been written for your machine! Do not use any of these parameters or settings unless you know what you are doing. I am not responsible if you run into trouble!
 - All basic configuration is done in AL_1105.hal. AL1105_postgui.hal contains all connections to the peripherals
 - Since many functions have multiple input options, AL_1105_postgui.hal is classified by functions
 - HAL components are loaded with names instead of numbers so that they easily can be identified
