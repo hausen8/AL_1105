@@ -7,6 +7,7 @@ Last edited: 2023-04-11
 - AL1105_postgui.hal contains all connections to the pendand (Logitech F310 USB game controller), some buttons in a keyboard drawer and the PyVCP panel
 - Since many functions have multiple input options, AL_1105_postgui.hal is not sorted by input devices but by functions (i.e. mist, toolchange)
 - HAL components are loaded with names instead of numbers so that they easily can be identified
+- [easy]probe add-in can be found at https://github.com/hausen8/EasyProbe
 
 **HARDWARE COMPONENTS**
 - Sorotec Alu Line 1105
